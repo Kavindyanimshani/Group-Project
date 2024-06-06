@@ -56,27 +56,34 @@ const Signin = () => {
       username,
       password,
     };
-
+  
     try {
-      const response = await fetch('http://localhost:5000/api/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        alert('Login successful');
-        navigate('/'); // Navigate to the home page after successful sign-in
+      if (username === 'Admin' && password === 'Admin@123') {
+        // Redirect to admin dashboard
+        alert('Admin login successful');
+        navigate('/admin-dashboard');
       } else {
-        alert(`Login failed: ${result.message}`);
+        const response = await fetch('http://localhost:5000/api/signin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('Login successful');
+          navigate('/student-dashboard'); // Redirect to the student dashboard page after successful sign-in
+        } else {
+          alert(`Login failed: ${result.message}`);
+        }
       }
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred. Please try again.');
     }
   };
+  
 
 
   return (

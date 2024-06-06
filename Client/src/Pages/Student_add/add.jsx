@@ -114,10 +114,65 @@ const add = () => {
     };
 
     const handleSubmit = () => {
-        // Add your submit logic here
-        console.log(formValues);
+        console.log('Form Values:', formValues);
+    
+        // Check if any required fields are empty
+        const requiredFields = ['firstName', 'lastName', 'age', 'courseName', 'email', 'admissionId', 'gender', 'phoneNumber', 'password'];
+        const emptyFields = requiredFields.filter(field => !formValues[field].trim());
+        
+        // Log empty fields to debug
+        console.log('Empty Fields:', emptyFields);
+    
+        if (emptyFields.length > 0) {
+            console.error('Validation Error: All fields are required');
+            return; // Stop form submission
+        }
+        
+        const studentData = {
+            first_name: formValues.firstName,
+            last_name: formValues.lastName,
+            gender: formValues.gender,
+            age: formValues.age,
+            email: formValues.email,
+            phone_number: formValues.phoneNumber,
+            course_name: formValues.courseName,
+            other_info: '',
+            student_id: formValues.admissionId,
+            password: formValues.password,
+        };
+        
+        // Send the form data if all required fields are filled
+        fetch('http://localhost:5000/api/students', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(studentData),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.error) {
+                console.error('Error:', data.error);
+            } else {
+                console.log('Success:', data);
+                // Clear input fields
+                setFormValues({
+                    firstName: '',
+                    lastName: '',
+                    age: '',
+                    courseName: '',
+                    email: '',
+                    admissionId: '',
+                    gender: '',
+                    phoneNumber: '',
+                    password: '',
+                });
+                // Optionally show a success message
+            }
+        })
+        .catch((error) => console.error('Error:', error));
     };
-
+    
     return (
         <div>
             <Head />
