@@ -1,3 +1,5 @@
+// add2.jsx
+
 import React, { useState } from 'react';
 import './add2.css';
 import Head from '../../Component/Head/head';
@@ -7,7 +9,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 
-const add2 = () => {
+const Add2 = () => {
     const [courseId, setCourseId] = useState('');
     const [courseName, setCourseName] = useState('');
     const [moduleCoordinatorName, setModuleCoordinatorName] = useState('');
@@ -16,82 +18,17 @@ const add2 = () => {
     const [courseDuration, setCourseDuration] = useState('');
     const [descriptionOfCourse, setDescriptionOfCourse] = useState('');
 
-    const [errors, setErrors] = useState({
-        courseId: '',
-        courseName: '',
-        moduleCoordinatorName: '',
-        coordinatorPhoneNumber: '',
-        noOfStudent: '',
-        courseDuration: '',
-    });
+    
+    const handleCourseIdChange = (e) => setCourseId(e.target.value.toUpperCase());
+    const handleCourseNameChange = (e) => setCourseName(e.target.value);
+    const handleModuleCoordinatorNameChange = (e) => setModuleCoordinatorName(e.target.value);
+    const handleCoordinatorPhoneNumberChange = (e) => setCoordinatorPhoneNumber(e.target.value);
+    const handleNoOfStudentChange = (e) => setNoOfStudent(e.target.value);
+    const handleCourseDurationChange = (e) => setCourseDuration(e.target.value);
+    const handleDescriptionChange = (e) => setDescriptionOfCourse(e.target.value);
 
-    const handleCourseIdChange = (e) => {
-        const value = e.target.value.toUpperCase();
-        if (/^[A-Z0-9]*$/.test(value)) {
-            setCourseId(value);
-            setErrors((prev) => ({ ...prev, courseId: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, courseId: 'Only numbers and capital letters without spaces are allowed.' }));
-        }
-    };
-
-    const handleCourseNameChange = (e) => {
-        const value = e.target.value;
-        if (/^[A-Za-z\s]*$/.test(value)) {
-            setCourseName(value);
-            setErrors((prev) => ({ ...prev, courseName: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, courseName: 'Only letters and spaces are allowed.' }));
-        }
-    };
-
-    const handleModuleCoordinatorNameChange = (e) => {
-        const value = e.target.value;
-        if (/^[A-Za-z\s]*$/.test(value)) {
-            setModuleCoordinatorName(value);
-            setErrors((prev) => ({ ...prev, moduleCoordinatorName: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, moduleCoordinatorName: 'Only letters and spaces are allowed.' }));
-        }
-    };
-
-    const handleCoordinatorPhoneNumberChange = (e) => {
-        const value = e.target.value;
-        if (/^\d*$/.test(value) && value.length <= 10) {
-            setCoordinatorPhoneNumber(value);
-            setErrors((prev) => ({ ...prev, coordinatorPhoneNumber: value.length === 10 ? '' : 'Must be a 10-digit number.' }));
-        } else {
-            setErrors((prev) => ({ ...prev, coordinatorPhoneNumber: 'Only 10-digit numbers are allowed.' }));
-        }
-    };
-
-    const handleNoOfStudentChange = (e) => {
-        const value = e.target.value;
-        if (/^\d*$/.test(value)) {
-            setNoOfStudent(value);
-            setErrors((prev) => ({ ...prev, noOfStudent: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, noOfStudent: 'Only numbers are allowed.' }));
-        }
-    };
-
-    const handleCourseDurationChange = (e) => {
-        const value = e.target.value;
-        if (/^[A-Za-z0-9\s]*$/.test(value)) {
-            setCourseDuration(value);
-            setErrors((prev) => ({ ...prev, courseDuration: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, courseDuration: 'Only letters and numbers are allowed.' }));
-        }
-    };
-
-    const handleDescriptionChange = (e) => {
-        setDescriptionOfCourse(e.target.value);
-    };
-
-    const handleSubmit = () => {
-        // Add your submit logic here
-        console.log({
+    const handleSubmit = async () => {
+        const courseData = {
             courseId,
             courseName,
             moduleCoordinatorName,
@@ -99,7 +36,23 @@ const add2 = () => {
             noOfStudent,
             courseDuration,
             descriptionOfCourse,
-        });
+        };
+
+        try {
+            const response = await fetch('http://localhost:5000/api/courses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(courseData),
+            });
+            if (response.ok) {
+                console.log('Course added successfully');
+            } else {
+                const errorData = await response.json();
+                console.error('Error adding course:', errorData.error);
+            }
+        } catch (error) {
+            console.error('Error adding course:', error.message);
+        }
     };
 
     return (
@@ -118,47 +71,21 @@ const add2 = () => {
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{
-                                        marginTop: 7, 
-                                        backgroundColor: 'rgb(188, 187, 187)',
-                                        borderRadius: 4,
-                                        '& > :not(style)': { m: 1, width: '90%' },
-                                    }}
+                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="courseId"
-                                        label="Course ID"
-                                        variant="standard"
-                                        value={courseId}
-                                        onChange={handleCourseIdChange}
-                                        error={Boolean(errors.courseId)}
-                                        helperText={errors.courseId}
-                                    />
+                                    <TextField id="courseId" label="Course ID" variant="standard" value={courseId} onChange={handleCourseIdChange} />
                                 </Box>
                             </div>
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{
-                                        marginTop: 7, 
-                                        backgroundColor: 'rgb(188, 187, 187)',
-                                        borderRadius: 4,
-                                        '& > :not(style)': { m: 1, width: '90%' },
-                                    }}
+                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="coordinatorPhoneNumber"
-                                        label="Coordinator Phone Number"
-                                        variant="standard"
-                                        value={coordinatorPhoneNumber}
-                                        onChange={handleCoordinatorPhoneNumberChange}
-                                        error={Boolean(errors.coordinatorPhoneNumber)}
-                                        helperText={errors.coordinatorPhoneNumber}
-                                    />
+                                    <TextField id="coordinatorPhoneNumber" label="Coordinator Phone Number" variant="standard" value={coordinatorPhoneNumber} onChange={handleCoordinatorPhoneNumberChange} />
                                 </Box>
                             </div>
                         </div>
@@ -167,47 +94,21 @@ const add2 = () => {
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{
-                                        marginTop: 7, 
-                                        backgroundColor: 'rgb(188, 187, 187)',
-                                        borderRadius: 4,
-                                        '& > :not(style)': { m: 1, width: '90%' },
-                                    }}
+                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="courseName"
-                                        label="Course Name"
-                                        variant="standard"
-                                        value={courseName}
-                                        onChange={handleCourseNameChange}
-                                        error={Boolean(errors.courseName)}
-                                        helperText={errors.courseName}
-                                    />
+                                    <TextField id="courseName" label="Course Name" variant="standard" value={courseName} onChange={handleCourseNameChange} />
                                 </Box>
                             </div>
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{
-                                        marginTop: 7, 
-                                        backgroundColor: 'rgb(188, 187, 187)',
-                                        borderRadius: 4,
-                                        '& > :not(style)': { m: 1, width: '90%' },
-                                    }}
+                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="noOfStudent"
-                                        label="No Of Student"
-                                        variant="standard"
-                                        value={noOfStudent}
-                                        onChange={handleNoOfStudentChange}
-                                        error={Boolean(errors.noOfStudent)}
-                                        helperText={errors.noOfStudent}
-                                    />
+                                    <TextField id="noOfStudent" label="No Of Student" variant="standard" value={noOfStudent} onChange={handleNoOfStudentChange} />
                                 </Box>
                             </div>
                         </div>
@@ -216,47 +117,21 @@ const add2 = () => {
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{
-                                        marginTop: 7, 
-                                        backgroundColor: 'rgb(188, 187, 187)',
-                                        borderRadius: 4,
-                                        '& > :not(style)': { m: 1, width: '90%' },
-                                    }}
+                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="moduleCoordinatorName"
-                                        label="Module Coordinator Name"
-                                        variant="standard"
-                                        value={moduleCoordinatorName}
-                                        onChange={handleModuleCoordinatorNameChange}
-                                        error={Boolean(errors.moduleCoordinatorName)}
-                                        helperText={errors.moduleCoordinatorName}
-                                    />
+                                    <TextField id="moduleCoordinatorName" label="Module Coordinator Name" variant="standard" value={moduleCoordinatorName} onChange={handleModuleCoordinatorNameChange} />
                                 </Box>
                             </div>
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{
-                                        marginTop: 7, 
-                                        backgroundColor: 'rgb(188, 187, 187)',
-                                        borderRadius: 4,
-                                        '& > :not(style)': { m: 1, width: '90%' },
-                                    }}
+                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="courseDuration"
-                                        label="Course Duration"
-                                        variant="standard"
-                                        value={courseDuration}
-                                        onChange={handleCourseDurationChange}
-                                        error={Boolean(errors.courseDuration)}
-                                        helperText={errors.courseDuration}
-                                    />
+                                    <TextField id="courseDuration" label="Course Duration" variant="standard" value={courseDuration} onChange={handleCourseDurationChange} />
                                 </Box>
                             </div>
                         </div>
@@ -266,21 +141,11 @@ const add2 = () => {
                         <div>
                             <Box
                                 component="form"
-                                sx={{
-                                    backgroundColor: 'rgb(188, 187, 187)',
-                                    borderRadius: 4,
-                                    '& > :not(style)': { m: 1, width: '97%' },
-                                }}
+                                sx={{ backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '97%' } }}
                                 noValidate
                                 autoComplete="off"
                             >
-                                <TextField
-                                    id="descriptionOfCourse"
-                                    label="Description Of Course"
-                                    variant="standard"
-                                    value={descriptionOfCourse}
-                                    onChange={handleDescriptionChange}
-                                />
+                                <TextField id="descriptionOfCourse" label="Description Of Course" variant="standard" value={descriptionOfCourse} onChange={handleDescriptionChange} />
                             </Box>
                         </div>
                     </div>
@@ -303,4 +168,4 @@ const add2 = () => {
     );
 };
 
-export default add2;
+export default Add2;

@@ -1,22 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db'); // Assuming your database connection is in db.js
+const db = require('./db'); // Import the db connection from db.js
 
 router.post('/students', (req, res) => {
-    const { firstName, lastName, gender, age, email, phoneNumber, courseName, otherInfo, studentId, password } = req.body;
+    const { first_name, last_name, gender, age, email, phone_number, course_name, other_info, student_id, password } = req.body;
 
-    if (!firstName || !lastName || !gender || !age || !email || !phoneNumber || !courseName || !studentId || !password) {
-        console.error('Validation Error: All fields are required');
-        return res.status(400).json({ error: 'All fields are required' });
-    }
+    const sql = "INSERT INTO students (firstName, lastName, gender, age, email, phoneNumber, courseName, otherInfo, studentId, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const values = [first_name, last_name, gender, age, email, phone_number, course_name, other_info, student_id, password];
 
-    const sql = 'INSERT INTO students (first_name, last_name, gender, age, email, phone_number, course_name, other_info, student_id, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    db.query(sql, [firstName, lastName, gender, age, email, phoneNumber, courseName, otherInfo, studentId, password], (err, result) => {
+    db.query(sql, values, (err, result) => {
         if (err) {
             console.error('Database Error:', err);
-            return res.status(500).json({ error: 'Error inserting student' });
+            res.status(500).json({ error: 'Database Error: ' + err.message });
+            return;
         }
-        res.json({ message: 'Student added successfully', studentId: result.insertId });
+        console.log('Received student data:', req.body);
+        console.log('Inserted student with ID:', result.insertId);
+        res.status(200).json({ message: 'Student added successfully', studentId: result.insertId });
     });
 });
 

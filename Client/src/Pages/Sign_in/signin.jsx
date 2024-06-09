@@ -14,7 +14,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import axios from 'axios';
 
-
 const Signin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -56,35 +55,39 @@ const Signin = () => {
       username,
       password,
     };
-  
+
     try {
-      if (username === 'Admin' && password === 'Admin@123') {
-        // Redirect to admin dashboard
-        alert('Admin login successful');
-        navigate('/admin-dashboard');
-      } else {
-        const response = await fetch('http://localhost:5000/api/signin', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userData),
-        });
-        const result = await response.json();
-        if (response.ok) {
-          alert('Login successful');
-          navigate('/student-dashboard'); // Redirect to the student dashboard page after successful sign-in
+      const response = await axios.post('http://localhost:5000/api/signin', userData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = response.data;
+
+      if (response.status === 200) {
+        alert('Login successful');
+        if (result.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else if (result.role === 'student') {
+          navigate('/student-panel');
         } else {
-          alert(`Login failed: ${result.message}`);
+          alert('Unknown role');
         }
+      } else {
+        alert(`Login failed: ${result.message}`);
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again.');
+      if (error.response) {
+        alert(`Login failed: ${error.response.data.message}`);
+      } else if (error.request) {
+        alert('Network error: Please check your network connection or try again later.');
+      } else {
+        console.error('Error:', error.message);
+        alert('An error occurred. Please try again.');
+      }
     }
   };
-  
-
 
   return (
     <div>
@@ -160,7 +163,7 @@ const Signin = () => {
               <a href='/signup' className='signup-link-txt'>Sign Up</a>
             </div>
             <div>
-              <button type="submit" className='signin-main-btn'><a href='/student' className='signin-main-btn-clr'>Sign In</a></button>
+              <button type="submit" className='signin-main-btn'>Sign In</button>
             </div>
           </form>
         </div>

@@ -116,9 +116,50 @@ const add1 = () => {
         setErrors({ ...errors, [id]: error });
     };
 
-    const handleSubmit = () => {
-        // Add your submit logic here
-        console.log(formValues);
+    const handleSubmit = async () => {
+        // Validation check
+        let isValid = true;
+        const newErrors = { ...errors };
+
+        Object.keys(formValues).forEach((key) => {
+            if (formValues[key] === '') {
+                newErrors[key] = 'This field is required.';
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            setErrors(newErrors);
+            return;
+        }
+
+        // Add your submit logic here (e.g., sending data to backend)
+        try {
+            const response = await fetch('http://localhost:5000/api/teachers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formValues),
+            });
+            if (response.ok) {
+                console.log('Teacher added successfully');
+                // Reset form values after submission
+                setFormValues({
+                    lectureId: '',
+                    age: '',
+                    loginUserName: '',
+                    name: '',
+                    contactNumber: '',
+                    email: '',
+                    gender: '',
+                    module: '',
+                    password: '',
+                });
+            }
+        } catch (error) {
+            console.error('Error adding teacher:', error);
+        }
     };
 
     return (

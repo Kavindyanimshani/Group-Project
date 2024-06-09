@@ -122,27 +122,27 @@ const List = () => {
                             </TableHead>
                             <TableBody>
                                 {students.map((row) => (
-                                    <React.Fragment key={row.student_id}>
+                                    <React.Fragment key={row.studentId}>
                                         <StyledTableRow>
-                                            <StyledTableCell align='center'>{row.student_id}</StyledTableCell>
-                                            <StyledTableCell align='center'>{row.frist_name} {row.last_name}</StyledTableCell>
-                                            <StyledTableCell align='center'>{row.course_name}</StyledTableCell>
+                                            <StyledTableCell align='center'>{row.studentId}</StyledTableCell>
+                                            <StyledTableCell align='center'>{row.firstName } {row.last_name}</StyledTableCell>
+                                            <StyledTableCell align='center'>{row.courseName}</StyledTableCell>
                                             <StyledTableCell align='center'>
                                                 <Button
                                                     variant='contained'
                                                     size='small'
                                                     sx={{ backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
-                                                    onClick={() => handleOpenDetails(row.student_id)}
+                                                    onClick={() => handleOpenDetails(row.studentId)}
                                                 >
-                                                    {openDetails[row.student_id] ? 'Hide Details' : 'View'}
+                                                    {openDetails[row.studentId] ? 'Hide Details' : 'View'}
                                                 </Button>
                                             </StyledTableCell>
-                                            <StyledTableCell align='center'>{row.phone_number}</StyledTableCell>
+                                            <StyledTableCell align='center'>{row.phoneNumber}</StyledTableCell>
                                         </StyledTableRow>
-                                        {openDetails[row.student_id] && (
+                                        {openDetails[row.studentId] && (
                                             <TableRow>
                                                 <StyledTableCell colSpan={5}>
-                                                    <p>{row.other_info}</p>
+                                                    <p>{row.otherInfo}</p>
                                                 </StyledTableCell>
                                             </TableRow>
                                         )}

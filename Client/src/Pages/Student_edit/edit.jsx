@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './edit.css';
 import Head from '../../Component/Head/head';
 import Box from '@mui/material/Box';
@@ -14,7 +15,8 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 
-const edit = () => {
+
+const Edit = ({ studentId }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [formValues, setFormValues] = useState({
         firstName: '',
@@ -39,12 +41,27 @@ const edit = () => {
         password: '',
     });
 
+    useEffect(() => {
+        if (studentId) {
+            fetch(`http://localhost:5000/api/students/${studentId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => setFormValues(data))
+                .catch(error => console.error('Error fetching student data:', error));
+        }
+    }, [studentId]);
+
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
 
+    
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         let error = '';
@@ -114,8 +131,36 @@ const edit = () => {
     };
 
     const handleSubmit = () => {
-        // Add your submit logic here
-        console.log(formValues);
+        const requestBody = {
+            firstName: formValues.firstName,
+            lastName: formValues.lastName,
+            gender: formValues.gender,
+            age: formValues.age,
+            email: formValues.email,
+            phoneNumber: formValues.phoneNumber,
+            courseName: formValues.courseName,
+            password: formValues.password,
+        };
+
+        fetch(`http://localhost:5000/api/students/${studentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     };
 
     return (
@@ -130,7 +175,6 @@ const edit = () => {
                         <h2 className='add-top-head4'>Student Information!</h2>
                     </div>
                     <div className='xs-add-main-info-rect4'>
-
                         <div className='xs-add-sub4'>
                             <div>
                                 <Box
@@ -247,13 +291,14 @@ const edit = () => {
                                         onChange={handleInputChange}
                                         error={Boolean(errors.email)}
                                         helperText={errors.email}
-                                    />                                </Box>
+                                    />                                
+                                </Box>
                             </div>
                             <div>
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, // Add margin-top: 20px
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -269,7 +314,8 @@ const edit = () => {
                                         onChange={handleInputChange}
                                         error={Boolean(errors.admissionId)}
                                         helperText={errors.admissionId}
-                                    />                                </Box>
+                                    />                                
+                                </Box>
                             </div>
                         </div>
 
@@ -278,7 +324,7 @@ const edit = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, // Add margin-top: 20px
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -307,7 +353,7 @@ const edit = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, // Add margin-top: 20px
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -323,7 +369,8 @@ const edit = () => {
                                         onChange={handleInputChange}
                                         error={Boolean(errors.phoneNumber)}
                                         helperText={errors.phoneNumber}
-                                    />                                </Box>
+                                    />                                
+                                </Box>
                             </div>
                             <div>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -364,7 +411,6 @@ const edit = () => {
                                 </Box>
                             </div>
                         </div>
-
                     </div>
                     <div className='add-save-btn4'>
                         <Stack direction="row" spacing={4}>
@@ -382,7 +428,11 @@ const edit = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default edit
+Edit.propTypes = {
+    studentId: PropTypes.string.isRequired,
+};
+
+export default Edit;
