@@ -1,10 +1,9 @@
-import React from 'react'
-import './admin.css'
-import Head from '../../Component/Head/head'
+import React, { useState, useEffect } from 'react';
+import './admin.css';
+import Head from '../../Component/Head/head';
 import Image1 from '../../assets/student.png';
 import Image2 from '../../assets/teacher.png';
 import Image3 from '../../assets/online-course.png';
-import Image4 from '../../assets/line-chart.png';
 import Image5 from '../../assets/moon.png';
 import Image6 from '../../assets/person.png';
 import Image7 from '../../assets/lecturer.png';
@@ -42,37 +41,46 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-function createData(
-    id,
-    name,
-    marks,
-    average,
-    course
-) {
-    return { id, name, marks, average, course };
-}
+const Admin = () => {
+    const [stats, setStats] = useState({ students: 0, teachers: 0, courses: 0 });
+    const [students, setStudents] = useState([]);
 
-const rows = [
-    createData(220100009, 'M.A.Heshan Rashmika', 'A+', '80%', 'IT Course'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'A+', '80%', 'IT Course'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'A+', '80%', 'IT Course'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'A+', '80%', 'IT Course'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'A+', '80%', 'IT Course'),
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/stats');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Fetched stats:', data); // Log fetched data
+                setStats(data);
+            } catch (error) {
+                console.error('Error fetching stats:', error.message);
+            }
+        };
 
-];
+        const fetchStudents = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/students');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Fetched students:', data); // Log fetched data
+                setStudents(data);
+            } catch (error) {
+                console.error('Error fetching students:', error.message);
+            }
+        };
 
-const sample = [1, 10, 30, 50, 70, 90, 100];
-
-const admin = () => {
+        fetchStats();
+        fetchStudents();
+    }, []);
 
     const img1 = {
         width: '30%',
     };
-
-    const img2 = {
-        width: '40%',
-    };
-
 
     return (
         <div>
@@ -82,42 +90,37 @@ const admin = () => {
                     <h2 className='top-head'>Welcome To Admin Dashboard!</h2>
                 </div>
 
-
                 <div className='xs-main-rect'>
-
                     <div className='xs-rect'>
                         <h3 className='student'>Students</h3>
                         <img src={Image1} alt="image" style={img1} className='std-icon' />
-                        <h1 className='quantity'>145</h1>
+                        <h1 className='quantity'>{stats.students}</h1>
                     </div>
                     <div className='xs-rect'>
                         <h3 className='student'>Teachers</h3>
                         <img src={Image2} alt="image" style={img1} className='std-icon' />
-                        <h1 className='quantity'>12</h1>
+                        <h1 className='quantity'>{stats.teachers}</h1>
                     </div>
                     <div className='xs-rect'>
                         <h3 className='student'>Courses</h3>
                         <img src={Image3} alt="image" style={img1} className='std-icon' />
-                        <h1 className='quantity'>8%</h1>
+                        <h1 className='quantity'>{stats.courses}</h1>
                     </div>
-
                 </div>
 
-
                 <div className='m-main-rect'>
-
                     <div className='m-rect'>
                         <h3 className='tp'>Overview</h3>
                         <Box sx={{ width: '100%', maxWidth: 500 }}>
                             <LineChart
-                                xAxis={[{ data: sample }]}
+                                xAxis={[{ data: [1, 10, 30, 50, 70, 90, 100] }]}
                                 yAxis={[
                                     { id: 'linearAxis', scaleType: 'linear' },
                                     { id: 'logAxis', scaleType: 'log' },
                                 ]}
                                 series={[
-                                    { yAxisKey: 'linearAxis', data: sample, label: 'Lec' },
-                                    { yAxisKey: 'logAxis', data: sample, label: 'Std' },
+                                    { yAxisKey: 'linearAxis', data: [1, 10, 30, 50, 70, 90, 100], label: 'Lec' },
+                                    { yAxisKey: 'logAxis', data: [1, 10, 30, 50, 70, 90, 100], label: 'Std' },
                                 ]}
                                 leftAxis="linearAxis"
                                 rightAxis="logAxis"
@@ -146,34 +149,38 @@ const admin = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div className='m-main-rect'>
-
                     <div className='m-rect'>
-                        <h3 className='tp'>Overview</h3>
+                        <h3 className='tp'>Student Details</h3>
                         <TableContainer component={Paper} sx={{ borderRadius: 4 }}>
                             <Table sx={{ minWidth: 700 }} aria-label="customized table">
                                 <TableHead>
                                     <TableRow>
-                                        <StyledTableCell align="left">ID</StyledTableCell>
-                                        <StyledTableCell align="center">Name</StyledTableCell>
-                                        <StyledTableCell align="center">marks</StyledTableCell>
-                                        <StyledTableCell align="center">Average</StyledTableCell>
-                                        <StyledTableCell align="center">Course</StyledTableCell>
+                                        <StyledTableCell align="left">Student ID</StyledTableCell>
+                                        <StyledTableCell align="center">First Name</StyledTableCell>
+                                        <StyledTableCell align="center">Last Name</StyledTableCell>
+                                        <StyledTableCell align="center">Gender</StyledTableCell>
+                                        <StyledTableCell align="center">Age</StyledTableCell>
+                                        <StyledTableCell align="center">Email</StyledTableCell>
+                                        <StyledTableCell align="center">Phone Number</StyledTableCell>
+                                        <StyledTableCell align="center">Course Name</StyledTableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rows.map((row) => (
-                                        <StyledTableRow key={row.id}>
+                                    {students.map((student) => (
+                                        <StyledTableRow key={student.studentId}>
                                             <StyledTableCell component="th" scope="row">
-                                                {row.id}
+                                                {student.studentId}
                                             </StyledTableCell>
-                                            <StyledTableCell align="center">{row.name}</StyledTableCell>
-                                            <StyledTableCell align="center">{row.marks}</StyledTableCell>
-                                            <StyledTableCell align="center">{row.average}</StyledTableCell>
-                                            <StyledTableCell align="center">{row.course}</StyledTableCell>
+                                            <StyledTableCell align="center">{student.firstName}</StyledTableCell>
+                                            <StyledTableCell align="center">{student.lastName}</StyledTableCell>
+                                            <StyledTableCell align="center">{student.gender}</StyledTableCell>
+                                            <StyledTableCell align="center">{student.age}</StyledTableCell>
+                                            <StyledTableCell align="center">{student.email}</StyledTableCell>
+                                            <StyledTableCell align="center">{student.phoneNumber}</StyledTableCell>
+                                            <StyledTableCell align="center">{student.courseName}</StyledTableCell>
                                         </StyledTableRow>
                                     ))}
                                 </TableBody>
@@ -185,29 +192,26 @@ const admin = () => {
                         <div className='lbl-1'>
                             <img src={Image8} className='lbl-icon' />
                             <div className='lbl-detail'>
-                                <h5>CS Assigment Submitions</h5>
+                                <h5>CS Assignment Submissions</h5>
                             </div>
                         </div>
                         <div className='lbl-2'>
                             <img src={Image8} className='lbl-icon' />
                             <div className='lbl-detail'>
-                                <h5>CS Assigment Submition</h5>
+                                <h5>CS Assignment Submission</h5>
                             </div>
                         </div>
                         <div className='lbl-2'>
                             <img src={Image8} className='lbl-icon' />
                             <div className='lbl-detail'>
-                                <h5>MAD Assigment Submition</h5>
+                                <h5>MAD Assignment Submission</h5>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default admin
+export default Admin;

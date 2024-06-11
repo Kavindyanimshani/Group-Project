@@ -1,4 +1,3 @@
-// add_work.js
 const express = require('express');
 const router = express.Router();
 const pool = require('./db'); // Assuming you are using a MySQL or PostgreSQL pool
@@ -10,6 +9,7 @@ router.post('/add_work', (req, res) => {
     const query = 'INSERT INTO add_work (StudentID, Place) VALUES (?, ?)';
     pool.query(query, [StudentID, Place], (err, result) => {
         if (err) {
+            console.error(err);
             return res.status(500).json({ error: err.message });
         }
         res.status(200).json({ message: 'Work added successfully', id: result.insertId });
@@ -27,6 +27,7 @@ router.get('/unmatched_students', (req, res) => {
 
     pool.query(query, (err, results) => {
         if (err) {
+            console.error(err);
             return res.status(500).json({ error: err.message });
         }
         res.status(200).json(results);

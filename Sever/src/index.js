@@ -1,9 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-//const helmet = require('helmet');
-//const morgan = require('morgan');
 const app = express();
-//require('dotenv').config();
+
 const userRegisterRouter = require('./user_register');
 const userSignInRouter = require('./user_signin');
 const stListRouter = require('./st_list');
@@ -15,7 +13,8 @@ const courseListRouter = require('./course_list');
 const stUpdateRouter = require('./st_update');
 const teacherEditRouter = require('./teacher_edit');
 const courseEditRouter = require('./course_edit');
-const addWorkRouter = require('./add_work'); // Import the add_works route
+const addWorkRouter = require('./add_work');
+const adminRouter = require('./admin'); // Import the admin route
 
 app.use(cors());
 app.use(express.json());
@@ -31,7 +30,8 @@ app.use('/api', courseListRouter);
 app.use('/api', stUpdateRouter);
 app.use('/api', teacherEditRouter);
 app.use('/api', courseEditRouter);
-app.use('/api', addWorkRouter); // Use the add_works route
+app.use('/api', addWorkRouter);
+app.use('/api', adminRouter); // Use the admin route
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');
