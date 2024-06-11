@@ -1,21 +1,33 @@
-// course_list.js
+// course_edit.js
 const express = require('express');
 const router = express.Router();
-const db = require('./db'); // Import the database connection
+const db = require('./db'); // assuming you have a db.js file for database connection
 
-// Route to get all courses
-router.get('/courses', (req, res) => {
-    // Query to select all courses from the database
-    const query = 'SELECT CourseID, CourseName, CourseCoordinator, PhoneNumber, NoOfStudents, CourseDuration, DescriptionOfCourse FROM course';
-    // Execute the query
-    db.query(query, (err, results) => {
+// Update course information
+router.put('/courses/:courseId', (req, res) => {
+    const { courseId } = req.params;
+    const { courseName, moduleCoordinatorName, coordinatorPhoneNumber, noOfStudent, courseDuration, descriptionOfCourse } = req.body;
+
+    if (!courseName || !moduleCoordinatorName || !coordinatorPhoneNumber || !noOfStudent || !courseDuration) {
+        return res.status(400).json({ error: 'Please provide all required fields.' });
+    }
+
+    const query = `
+        UPDATE lectuers
+        SET LecturerName = ?, Module = ?, ContactNumber = ?, OtherInfo = ?, LecturerName = ?
+        WHERE LecturerID = ?
+    `;
+    const values = [courseName, moduleCoordinatorName, coordinatorPhoneNumber, noOfStudent, courseDuration, descriptionOfCourse, courseId];
+
+    db.query(query, values, (err, result) => {
         if (err) {
-            console.error('Error fetching courses:', err);
-            res.status(500).send('Internal Server Error');
-        } else {
-            // Send the response with the fetched data
-            res.status(200).json(results);
+            console.error(err);
+            return res.status(500).json({ error: 'Internal server error' });
         }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+        res.status(200).json({ message: 'Course updated successfully!' });
     });
 });
 

@@ -77,27 +77,27 @@ const List2 = () => {
                             </TableHead>
                             <TableBody>
                                 {courses.map((course) => (
-                                    <React.Fragment key={course.CourseID}>
+                                    <React.Fragment key={course.LecturerID}>
                                         <StyledTableRow>
-                                            <StyledTableCell align="center">{course.CourseID }</StyledTableCell>
-                                            <StyledTableCell align="center">{course.CourseName}</StyledTableCell>
-                                            <StyledTableCell align="center">{course.CourseCoordinator}</StyledTableCell>
+                                            <StyledTableCell align="center">{course.LecturerID }</StyledTableCell>
+                                            <StyledTableCell align="center">{course.Module}</StyledTableCell>
+                                            <StyledTableCell align="center">{course.LecturerName}</StyledTableCell>
                                             <StyledTableCell align="center">
                                                 <Button
                                                     variant="contained"
                                                     size="small"
                                                     sx={{ backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
-                                                    onClick={() => handleOpenDetails(course.CourseID)}
+                                                    onClick={() => handleOpenDetails(course.LecturerID)}
                                                 >
-                                                    {openDetails[course.CourseID] ? 'Hide Details' : 'View'}
+                                                    {openDetails[course.LecturerID] ? 'Hide Details' : 'View'}
                                                 </Button>
                                             </StyledTableCell>
-                                            <StyledTableCell align="center">{course.PhoneNumber}</StyledTableCell>
+                                            <StyledTableCell align="center">{course.ContactNumber}</StyledTableCell>
                                         </StyledTableRow>
-                                        {openDetails[course.CourseID] && (
+                                        {openDetails[course.LecturerID] && (
                                             <TableRow>
                                                 <StyledTableCell colSpan={5}>
-                                                    <p>{course.DescriptionOfCourse }</p>
+                                                    <p>{course.OtherInfo }</p>
                                                 </StyledTableCell>
                                             </TableRow>
                                         )}

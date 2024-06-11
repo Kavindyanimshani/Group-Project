@@ -9,7 +9,7 @@ router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
 
   // Check if the email already exists
-  const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
+  const checkEmailSql = 'SELECT * FROM students WHERE email = ?';
   db.query(checkEmailSql, [email], async (err, results) => {
     if (err) {
       console.error('Error checking email:', err);
@@ -26,7 +26,7 @@ router.post('/signup', async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Insert the new user into the database
-      const insertUserSql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+      const insertUserSql = 'INSERT INTO students (username, email , password ) VALUES (?, ?, ?)';
       db.query(insertUserSql, [username, email, hashedPassword], (err, result) => {
         if (err) {
           console.error('Error inserting user into database:', err);

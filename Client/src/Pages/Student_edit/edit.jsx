@@ -1,3 +1,4 @@
+// Edit.jsx
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './edit.css';
@@ -14,7 +15,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
-
+import axios from 'axios';
 
 const Edit = ({ studentId }) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -24,36 +25,38 @@ const Edit = ({ studentId }) => {
         age: '',
         courseName: '',
         email: '',
-        admissionId: '',
-        gender: '',
         phoneNumber: '',
+        gender: '',
         password: '',
+        admissionId: '', // Add admissionId to formValues
     });
+    
     const [errors, setErrors] = useState({
         firstName: '',
         lastName: '',
         age: '',
         courseName: '',
         email: '',
-        admissionId: '',
-        gender: '',
         phoneNumber: '',
+        gender: '',
         password: '',
+        admissionId: '', // Add admissionId to errors
     });
-
+    
     useEffect(() => {
         if (studentId) {
-            fetch(`http://localhost:5000/api/students/${studentId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => setFormValues(data))
-                .catch(error => console.error('Error fetching student data:', error));
+            fetchStudentData(studentId);
         }
     }, [studentId]);
+
+    const fetchStudentData = async (id) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/students/${id}`);
+            setFormValues(response.data);
+        } catch (error) {
+            console.error('Error fetching student data:', error);
+        }
+    };
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -61,10 +64,10 @@ const Edit = ({ studentId }) => {
         event.preventDefault();
     };
 
-    
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         let error = '';
+
 
         switch (id) {
             case 'firstName':
@@ -118,6 +121,7 @@ const Edit = ({ studentId }) => {
         }
 
         setErrors({ ...errors, [id]: error });
+        setFormValues({ ...formValues, [id]: value });
     };
 
     const handleGenderChange = (e) => {
@@ -130,7 +134,7 @@ const Edit = ({ studentId }) => {
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (studentId) => {
         const requestBody = {
             firstName: formValues.firstName,
             lastName: formValues.lastName,
@@ -141,28 +145,39 @@ const Edit = ({ studentId }) => {
             courseName: formValues.courseName,
             password: formValues.password,
         };
-
-        fetch(`http://localhost:5000/api/students/${studentId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+    
+        axios.put(`http://localhost:5000/api/students/${studentId}`, requestBody)
+            .then(response => {
+                console.log('Success:', response.data);
+                // Clear input fields
+                setFormValues({
+                    firstName: '',
+                    lastName: '',
+                    age: '',
+                    courseName: '',
+                    email: '',
+                    phoneNumber: '',
+                    gender: '',
+                    password: '',
+                });
+                // Clear errors
+                setErrors({
+                    firstName: '',
+                    lastName: '',
+                    age: '',
+                    courseName: '',
+                    email: '',
+                    phoneNumber: '',
+                    gender: '',
+                    password: '',
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     };
-
+    
+    
     return (
         <div>
             <Head />
@@ -332,21 +347,22 @@ const Edit = ({ studentId }) => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="gender"
-                                        label="Gender"
-                                        variant="standard"
-                                        select
-                                        SelectProps={{ native: true }}
-                                        value={formValues.gender}
-                                        onChange={handleGenderChange}
-                                        error={Boolean(errors.gender)}
-                                        helperText={errors.gender}
-                                    >
-                                        <option value=""></option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                    </TextField>
+                                  <TextField
+    id="gender"
+    label="Gender"
+    variant="standard"
+    select
+    SelectProps={{ native: true }}
+    value={formValues.gender}
+    onChange={handleGenderChange}
+    error={Boolean(errors.gender)}
+    helperText={errors.gender}
+>
+    <option value=""></option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+</TextField>
+
                                 </Box>
                             </div>
                             <div>
@@ -414,15 +430,16 @@ const Edit = ({ studentId }) => {
                     </div>
                     <div className='add-save-btn4'>
                         <Stack direction="row" spacing={4}>
-                            <Button
-                                variant="contained"
-                                endIcon={<SaveIcon />}
-                                className='edit-btn-min'
-                                style={{ width: '70%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
-                                onClick={handleSubmit}
-                            >
-                                Save
-                            </Button>
+                        <Button
+    variant="contained"
+    endIcon={<SaveIcon />}
+    className='edit-btn-min'
+    style={{ width: '70%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
+    onClick={() => handleSubmit(studentId)} // Pass studentId here
+>
+    Save
+</Button>
+
                         </Stack>
                     </div>
                 </div>
@@ -434,5 +451,4 @@ const Edit = ({ studentId }) => {
 Edit.propTypes = {
     studentId: PropTypes.string.isRequired,
 };
-
 export default Edit;

@@ -1,3 +1,4 @@
+// st_edit.js
 const express = require('express');
 const router = express.Router();
 const db = require('./db');
@@ -10,15 +11,15 @@ router.put('/students/:studentId', (req, res) => {
     const query = `
         UPDATE students 
         SET 
-            first_name = ?, 
-            last_name = ?, 
+            firstName = ?, 
+            lastName = ?, 
             gender = ?, 
             age = ?, 
             email = ?, 
-            phone_number = ?, 
-            course_name = ?, 
+            phoneNumber = ?, 
+            courseName = ?, 
             password = ?
-        WHERE student_id = ?
+        WHERE studentId = ?
     `;
 
     db.query(query, [firstName, lastName, gender, age, email, phoneNumber, courseName, password, studentId], (err, result) => {

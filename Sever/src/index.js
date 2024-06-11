@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -9,11 +8,14 @@ const stAddRouter = require('./st_add');
 const stEditRouter = require('./st_edit');
 const teacherAddRouter = require('./teacher_add');
 const teacherListRouter = require('./teacher_list');
-const courseListRouter = require('./course_list'); // Import the course list router
+const courseListRouter = require('./course_list');
 const stUpdateRouter = require('./st_update');
+const teacherEditRouter = require('./teacher_edit');
+const courseEditRouter = require('./course_edit');
+const addWorkRouter = require('./add_work'); // Import the add_works route
 
 app.use(cors());
-app.use(express.json()); // Middleware to parse JSON bodies
+app.use(express.json());
 
 app.use('/api', userRegisterRouter);
 app.use('/api', userSignInRouter);
@@ -22,8 +24,11 @@ app.use('/api', stAddRouter);
 app.use('/api', stEditRouter);
 app.use('/api', teacherAddRouter);
 app.use('/api', teacherListRouter);
-app.use('/api', courseListRouter); // Mount the course list router with '/courses' prefix
+app.use('/api', courseListRouter);
 app.use('/api', stUpdateRouter);
+app.use('/api', teacherEditRouter);
+app.use('/api', courseEditRouter);
+app.use('/api', addWorkRouter); // Use the add_works route
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');

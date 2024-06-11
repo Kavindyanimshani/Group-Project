@@ -13,7 +13,7 @@ router.post('/signin', async (req, res) => {
   }
 
   // Check if the username exists in the database
-  const getUserSql = 'SELECT * FROM users WHERE username = ?';
+  const getUserSql = 'SELECT * FROM students WHERE username = ?';
   db.query(getUserSql, [username], async (err, results) => {
     if (err) {
       console.error('Error checking username:', err);

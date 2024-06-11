@@ -116,10 +116,39 @@ const edit1 = () => {
         setErrors({ ...errors, [id]: error });
     };
 
-    const handleSubmit = () => {
-        // Add your submit logic here
-        console.log(formValues);
-    };
+   // edit1.jsx - Update handleSubmit function
+   const handleSubmit = async () => {
+    try {
+        const response = await fetch(`http://localhost:5000/api/teachers/${formValues.lectureId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                LecturerName: formValues.name,
+                lnumber: formValues.lectureId,
+                Module: formValues.module,
+                ContactNumber: formValues.contactNumber,
+                Email: formValues.email,
+                Gender: formValues.gender,
+                Password: formValues.password,
+            }),
+        });
+
+        if (response.ok) {
+            console.log('Teacher information updated successfully.');
+            // Optionally, you can navigate to a success page or display a success message.
+        } else {
+            console.error('Failed to update teacher information.');
+            // Handle errors accordingly
+        }
+    } catch (error) {
+        console.error('Error updating teacher information:', error);
+        // Handle errors accordingly
+    }
+};
+
+    
 
     return (
         <div>

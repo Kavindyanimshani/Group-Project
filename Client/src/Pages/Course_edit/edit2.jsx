@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './edit2.css';
+import axios from 'axios'; // Import axios library
 import Head from '../../Component/Head/head';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -89,19 +90,36 @@ const edit2 = () => {
         setDescriptionOfCourse(e.target.value);
     };
 
-    const handleSubmit = () => {
-        // Add your submit logic here
-        console.log({
-            courseId,
-            courseName,
-            moduleCoordinatorName,
-            coordinatorPhoneNumber,
-            noOfStudent,
-            courseDuration,
-            descriptionOfCourse,
-        });
-    };
+    const handleSubmit = async () => {
+        try {
+            const response = await axios.put(`/api/courses/${courseId}`, {
+                courseName,
+                moduleCoordinatorName,
+                coordinatorPhoneNumber,
+                noOfStudent,
+                courseDuration,
+                descriptionOfCourse,
+            });
 
+            if (response.status === 200) {
+                // Clear form fields after successful update
+                setCourseId('');
+                setCourseName('');
+                setModuleCoordinatorName('');
+                setCoordinatorPhoneNumber('');
+                setNoOfStudent('');
+                setCourseDuration('');
+                setDescriptionOfCourse('');
+            }
+        } catch (error) {
+            console.error('Error updating course:', error);
+            if (error.response && error.response.data && error.response.data.error) {
+                setErrors({ global: error.response.data.error });
+            } else {
+                setErrors({ global: 'An error occurred while updating the course.' });
+            }
+        }
+    };
     return (
         <div>
             <Head />
