@@ -34,6 +34,7 @@ import Stdsick_leave from './Pages/Stdsick_leave/stdsicklv';
 import Stdleave_req from './Pages/Stdleave_req/leavereq';
 import Kitchen_duty from './Pages/Kitchen_duty/kitchen_duty';
 
+
 // Importing Components
 import Homepage_head from './Component/Homepage_head/homepage';
 import Homepage_footer from './Component/Homepage_footer/footer';
@@ -46,9 +47,10 @@ const App = () => {
     <BrowserRouter>
       <Routes>
 
-        <Route path='/' element={<Home_page />} />
-        <Route path='/home' element={<Home_page />} />
+     
+      <Route path='/' element={<Home_page />} />
         <Route path='/signup' element={<Sign_up />} /> 
+        <Route path='/home' element={<Home_page />} />
         <Route path='/signin' element={<Sign_in />} />
         <Route path='/resetpsw' element={<Reset_psw />} />
         <Route path='/admin-reset-pwd' element={<AdminReset_pwd />} />
@@ -78,6 +80,8 @@ const App = () => {
         <Route path='/reject-reason' element={<Reject_reason />} />
         <Route path='/student-sick-leave' element={<Stdsick_leave />} />
         <Route path='/student-leave-request' element={<Stdleave_req />} />
+        <Route path='/student-edit/:admissionId' element={<Student_edit />} />
+
       </Routes>
     </BrowserRouter>
   );

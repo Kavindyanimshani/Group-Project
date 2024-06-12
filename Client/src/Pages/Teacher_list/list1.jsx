@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './list1.css';
 import Head from '../../Component/Head/head';
 import { styled, alpha } from '@mui/material/styles';
@@ -12,6 +12,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import axios from 'axios';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -29,87 +30,67 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     '&:last-child td, &:last-child th': {
         border: 0,
     },
 }));
 
-function createData(
-    id,
-    name,
-    course_name,
-    informations1,
-    phone_number,
-) {
-    return { id, name, course_name, informations1, phone_number };
-}
-
-const rows = [
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-    createData('LID220100', 'S.Emasha Nawodani', 'Cyber Security', 'Some detail about Lectures', '0786386950'),
-
-];
-
 const Search = styled('div')(({ theme }) => ({
-    position: 'relative', // Allows positioning of elements within the search container
-    borderRadius: theme.shape.borderRadius, // Applies MUI's default border radius
-    backgroundColor: alpha(theme.palette.common.white, 0.15), // Sets a semi-transparent white background
-    '&:hover': { // Styles on hover state
-        backgroundColor: alpha(theme.palette.common.white, 0.15), // Slightly more opaque background on hover
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+        backgroundColor: alpha(theme.palette.common.white, 0.15),
     },
-    marginRight: theme.spacing(2), // Margin from the right side
-    marginLeft: 0, // No margin from the left side
-    width: '100%', // Takes up the full available width
-    [theme.breakpoints.up('sm')]: { // Styles for screens wider than small size
-        marginLeft: theme.spacing(3), // Add some margin from the left on larger screens
-        width: 'auto', // Allow the container to adjust its width automatically
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(3),
+        width: 'auto',
     },
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2), // Padding around the icon
-    height: '100%', // Ensures the icon fills the vertical space
-    position: 'absolute', // Positions the icon absolutely within the container
-    pointerEvents: 'none', // Disables pointer events on the wrapper (prevents accidental clicks)
-    display: 'flex', // Allows for horizontal alignment of the icon
-    alignItems: 'center', // Aligns the icon vertically within the wrapper
-    justifyContent: 'center', // Centers the icon horizontally within the wrapper
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit', // Inherits the text color from the parent theme
-    '& .MuiInputBase-input': { // Styles for the actual input element
-        padding: theme.spacing(1, 1, 1, 0), // Padding around the input text
-        // Adjusts vertical padding to account for the search icon
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`, // Space for icon + some padding
-        transition: theme.transitions.create('width'), // Enables smooth width changes
-        width: '100%', // Takes up the full available width within the container
-        [theme.breakpoints.up('md')]: { // Styles for medium screens and above
-            width: '20ch', // Sets a fixed width for the input field on larger screens
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+        padding: theme.spacing(1, 1, 1, 0),
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            width: '20ch',
         },
     },
 }));
 
+const List1 = () => {
+    const [teachers, setTeachers] = useState([]);
+    const [openDetails, setOpenDetails] = useState({});
 
-const list1 = () => {
+    useEffect(() => {
+        // Fetch teachers from the backend
+        const fetchTeachers = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/teachers');
+                setTeachers(response.data);
+            } catch (error) {
+                console.error('Error fetching teachers:', error);
+            }
+        };
 
-    const [openDetails, setOpenDetails] = React.useState({}); // State to track open details
+        fetchTeachers();
+    }, []);
 
     const handleOpenDetails = (rowId) => {
         setOpenDetails({ ...openDetails, [rowId]: !openDetails[rowId] });
@@ -146,29 +127,28 @@ const list1 = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {rows.map((row) => (
-                                    <React.Fragment key={row.id}>
+                                {teachers.map((teacher) => (
+                                    <React.Fragment key={teacher.LecturerID}>
                                         <StyledTableRow>
-                                            <StyledTableCell align="center">{row.id}</StyledTableCell>
-                                            <StyledTableCell align="center">{row.name}</StyledTableCell>
-                                            <StyledTableCell align="center">{row.course_name}</StyledTableCell>
+                                            <StyledTableCell align="center">{teacher.LecturerID}</StyledTableCell>
+                                            <StyledTableCell align="center">{teacher.LecturerName}</StyledTableCell>
+                                            <StyledTableCell align="center">{teacher.Module}</StyledTableCell>
                                             <StyledTableCell align="center">
                                                 <Button
                                                     variant="contained"
                                                     size="small"
                                                     sx={{ backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
-                                                    onClick={() => handleOpenDetails(row.id)}
+                                                    onClick={() => handleOpenDetails(teacher.LecturerID)}
                                                 >
-                                                    {openDetails[row.id] ? 'Hide Details' : 'View'}
+                                                    {openDetails[teacher.LecturerID] ? 'Hide Details' : 'View'}
                                                 </Button>
                                             </StyledTableCell>
-                                            <StyledTableCell align="center">{row.phone_number}</StyledTableCell>
+                                            <StyledTableCell align="center">{teacher.ContactNumber}</StyledTableCell>
                                         </StyledTableRow>
-                                        {openDetails[row.id] && (
+                                        {openDetails[teacher.LecturerID] && (
                                             <TableRow>
                                                 <StyledTableCell colSpan={5}>
-                                                    {/* Display detailed information from the row.detail property */}
-                                                    <p>{row.informations1}</p>
+                                                    <p>{teacher.OtherInfo}</p>
                                                 </StyledTableCell>
                                             </TableRow>
                                         )}
@@ -178,10 +158,9 @@ const list1 = () => {
                         </Table>
                     </TableContainer>
                 </div>
-
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default list1
+export default List1;

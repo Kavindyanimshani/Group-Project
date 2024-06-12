@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// Edit.jsx
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './edit.css';
 import Head from '../../Component/Head/head';
 import Box from '@mui/material/Box';
@@ -13,8 +15,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
+import axios from 'axios';
 
-const edit = () => {
+const Edit = ({ studentId }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [formValues, setFormValues] = useState({
         firstName: '',
@@ -22,22 +25,38 @@ const edit = () => {
         age: '',
         courseName: '',
         email: '',
-        admissionId: '',
-        gender: '',
         phoneNumber: '',
+        gender: '',
         password: '',
+        admissionId: '', // Add admissionId to formValues
     });
+    
     const [errors, setErrors] = useState({
         firstName: '',
         lastName: '',
         age: '',
         courseName: '',
         email: '',
-        admissionId: '',
-        gender: '',
         phoneNumber: '',
+        gender: '',
         password: '',
+        admissionId: '', // Add admissionId to errors
     });
+    
+    useEffect(() => {
+        if (studentId) {
+            fetchStudentData(studentId);
+        }
+    }, [studentId]);
+
+    const fetchStudentData = async (id) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/students/${id}`);
+            setFormValues(response.data);
+        } catch (error) {
+            console.error('Error fetching student data:', error);
+        }
+    };
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -48,6 +67,7 @@ const edit = () => {
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         let error = '';
+
 
         switch (id) {
             case 'firstName':
@@ -101,6 +121,7 @@ const edit = () => {
         }
 
         setErrors({ ...errors, [id]: error });
+        setFormValues({ ...formValues, [id]: value });
     };
 
     const handleGenderChange = (e) => {
@@ -113,11 +134,50 @@ const edit = () => {
         }
     };
 
-    const handleSubmit = () => {
-        // Add your submit logic here
-        console.log(formValues);
+    const handleSubmit = (studentId) => {
+        const requestBody = {
+            firstName: formValues.firstName,
+            lastName: formValues.lastName,
+            gender: formValues.gender,
+            age: formValues.age,
+            email: formValues.email,
+            phoneNumber: formValues.phoneNumber,
+            courseName: formValues.courseName,
+            password: formValues.password,
+        };
+    
+        axios.put(`http://localhost:5000/api/students/${studentId}`, requestBody)
+            .then(response => {
+                console.log('Success:', response.data);
+                // Clear input fields
+                setFormValues({
+                    firstName: '',
+                    lastName: '',
+                    age: '',
+                    courseName: '',
+                    email: '',
+                    phoneNumber: '',
+                    gender: '',
+                    password: '',
+                });
+                // Clear errors
+                setErrors({
+                    firstName: '',
+                    lastName: '',
+                    age: '',
+                    courseName: '',
+                    email: '',
+                    phoneNumber: '',
+                    gender: '',
+                    password: '',
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     };
-
+    
+    
     return (
         <div>
             <Head />
@@ -130,7 +190,6 @@ const edit = () => {
                         <h2 className='add-top-head4'>Student Information!</h2>
                     </div>
                     <div className='xs-add-main-info-rect4'>
-
                         <div className='xs-add-sub4'>
                             <div>
                                 <Box
@@ -247,13 +306,14 @@ const edit = () => {
                                         onChange={handleInputChange}
                                         error={Boolean(errors.email)}
                                         helperText={errors.email}
-                                    />                                </Box>
+                                    />                                
+                                </Box>
                             </div>
                             <div>
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, // Add margin-top: 20px
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -269,7 +329,8 @@ const edit = () => {
                                         onChange={handleInputChange}
                                         error={Boolean(errors.admissionId)}
                                         helperText={errors.admissionId}
-                                    />                                </Box>
+                                    />                                
+                                </Box>
                             </div>
                         </div>
 
@@ -278,7 +339,7 @@ const edit = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, // Add margin-top: 20px
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -286,28 +347,29 @@ const edit = () => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="gender"
-                                        label="Gender"
-                                        variant="standard"
-                                        select
-                                        SelectProps={{ native: true }}
-                                        value={formValues.gender}
-                                        onChange={handleGenderChange}
-                                        error={Boolean(errors.gender)}
-                                        helperText={errors.gender}
-                                    >
-                                        <option value=""></option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                    </TextField>
+                                  <TextField
+    id="gender"
+    label="Gender"
+    variant="standard"
+    select
+    SelectProps={{ native: true }}
+    value={formValues.gender}
+    onChange={handleGenderChange}
+    error={Boolean(errors.gender)}
+    helperText={errors.gender}
+>
+    <option value=""></option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+</TextField>
+
                                 </Box>
                             </div>
                             <div>
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, // Add margin-top: 20px
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -323,7 +385,8 @@ const edit = () => {
                                         onChange={handleInputChange}
                                         error={Boolean(errors.phoneNumber)}
                                         helperText={errors.phoneNumber}
-                                    />                                </Box>
+                                    />                                
+                                </Box>
                             </div>
                             <div>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -364,25 +427,28 @@ const edit = () => {
                                 </Box>
                             </div>
                         </div>
-
                     </div>
                     <div className='add-save-btn4'>
                         <Stack direction="row" spacing={4}>
-                            <Button
-                                variant="contained"
-                                endIcon={<SaveIcon />}
-                                className='edit-btn-min'
-                                style={{ width: '70%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
-                                onClick={handleSubmit}
-                            >
-                                Save
-                            </Button>
+                        <Button
+    variant="contained"
+    endIcon={<SaveIcon />}
+    className='edit-btn-min'
+    style={{ width: '70%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
+    onClick={() => handleSubmit(studentId)} // Pass studentId here
+>
+    Save
+</Button>
+
                         </Stack>
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default edit
+Edit.propTypes = {
+    studentId: PropTypes.string.isRequired,
+};
+export default Edit;

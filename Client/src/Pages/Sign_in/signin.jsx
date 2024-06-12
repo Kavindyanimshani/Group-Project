@@ -14,7 +14,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import axios from 'axios';
 
-
 const Signin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -58,23 +57,35 @@ const Signin = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/signin', {
-        method: 'POST',
+      const response = await axios.post('http://localhost:5000/api/signin', userData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData),
       });
-      const result = await response.json();
-      if (response.ok) {
+
+      const result = response.data;
+
+      if (response.status === 200) {
         alert('Login successful');
-        navigate('/'); // Navigate to the home page after successful sign-in
+        if (result.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else if (result.role === 'student') {
+          navigate('/student-panel');
+        } else {
+          alert('Unknown role');
+        }
       } else {
         alert(`Login failed: ${result.message}`);
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again.');
+      if (error.response) {
+        alert(`Login failed: ${error.response.data.message}`);
+      } else if (error.request) {
+        alert('Network error: Please check your network connection or try again later.');
+      } else {
+        console.error('Error:', error.message);
+        alert('An error occurred. Please try again.');
+      }
     }
   };
 
@@ -153,6 +164,8 @@ const Signin = () => {
             </div>
             <div>
               <button type="submit" className='signin-main-btn'><a href='/student-panel' className='signin-main-btn-clr'>Sign In</a></button>
+
+              <button type="submit" className='signin-main-btn'>Sign In</button>
             </div>
           </form>
         </div>

@@ -10,7 +10,7 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-const add2 = () => {
+const Add2 = () => {
     const [values, setValues] = useState({
         courseId: '',
         courseName: '',
@@ -143,15 +143,7 @@ const add2 = () => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="courseId"
-                                        label="Course ID"
-                                        variant="standard"
-                                        value={courseId}
-                                        onChange={handleCourseIdChange}
-                                        error={Boolean(errors.courseId)}
-                                        helperText={errors.courseId}
-                                    />
+                                    <TextField id="courseId" label="Course ID" variant="standard" name="courseId" value={values.courseId} onChange={handleChange} />
                                 </Box>
                             </div>
                             <div>
@@ -166,15 +158,7 @@ const add2 = () => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="coordinatorPhoneNumber"
-                                        label="Coordinator Phone Number"
-                                        variant="standard"
-                                        value={coordinatorPhoneNumber}
-                                        onChange={handleCoordinatorPhoneNumberChange}
-                                        error={Boolean(errors.coordinatorPhoneNumber)}
-                                        helperText={errors.coordinatorPhoneNumber}
-                                    />
+                                    <TextField id="coordinatorPhoneNumber" label="Coordinator Phone Number" variant="standard" name="coordinatorPhoneNumber" value={values.coordinatorPhoneNumber} onChange={handleChange} />
                                 </Box>
                             </div>
                         </div>
@@ -192,15 +176,7 @@ const add2 = () => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="courseName"
-                                        label="Course Name"
-                                        variant="standard"
-                                        value={courseName}
-                                        onChange={handleCourseNameChange}
-                                        error={Boolean(errors.courseName)}
-                                        helperText={errors.courseName}
-                                    />
+                                    <TextField id="courseName" label="Course Name" variant="standard" name="courseName" value={values.courseName} onChange={handleChange} />
                                 </Box>
                             </div>
                             <div>
@@ -215,15 +191,7 @@ const add2 = () => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="noOfStudent"
-                                        label="No Of Student"
-                                        variant="standard"
-                                        value={noOfStudent}
-                                        onChange={handleNoOfStudentChange}
-                                        error={Boolean(errors.noOfStudent)}
-                                        helperText={errors.noOfStudent}
-                                    />
+                                    <TextField id="noOfStudent" label="No Of Student" variant="standard" name="noOfStudent" value={values.noOfStudent} onChange={handleChange} />
                                 </Box>
                             </div>
                         </div>
@@ -241,15 +209,7 @@ const add2 = () => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="moduleCoordinatorName"
-                                        label="Module Coordinator Name"
-                                        variant="standard"
-                                        value={moduleCoordinatorName}
-                                        onChange={handleModuleCoordinatorNameChange}
-                                        error={Boolean(errors.moduleCoordinatorName)}
-                                        helperText={errors.moduleCoordinatorName}
-                                    />
+                                    <TextField id="moduleCoordinatorName" label="Module Coordinator Name" variant="standard" name="moduleCoordinatorName" value={values.moduleCoordinatorName} onChange={handleChange} />
                                 </Box>
                             </div>
                             <div>
@@ -264,15 +224,7 @@ const add2 = () => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField
-                                        id="courseDuration"
-                                        label="Course Duration"
-                                        variant="standard"
-                                        value={courseDuration}
-                                        onChange={handleCourseDurationChange}
-                                        error={Boolean(errors.courseDuration)}
-                                        helperText={errors.courseDuration}
-                                    />
+                                    <TextField id="courseDuration" label="Course Duration" variant="standard" name="courseDuration" value={values.courseDuration} onChange={handleChange} />
                                 </Box>
                             </div>
                         </div>
@@ -282,21 +234,11 @@ const add2 = () => {
                         <div>
                             <Box
                                 component="form"
-                                sx={{
-                                    backgroundColor: 'rgb(188, 187, 187)',
-                                    borderRadius: 4,
-                                    '& > :not(style)': { m: 1, width: '97%' },
-                                }}
+                                sx={{ backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '97%' } }}
                                 noValidate
                                 autoComplete="off"
                             >
-                                <TextField
-                                    id="descriptionOfCourse"
-                                    label="Description Of Course"
-                                    variant="standard"
-                                    value={descriptionOfCourse}
-                                    onChange={handleDescriptionChange}
-                                />
+                                <TextField id="descriptionOfCourse" label="Description Of Course" variant="standard" name="descriptionOfCourse" value={values.descriptionOfCourse} onChange={handleChange} />
                             </Box>
                         </div>
                     </div>
@@ -319,4 +261,4 @@ const add2 = () => {
     );
 };
 
-export default add2;
+export default Add2;

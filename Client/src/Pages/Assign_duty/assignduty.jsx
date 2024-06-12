@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './assignduty.css';
 import Head from '../../Component/Head/head';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
-import { styled, alpha } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -31,48 +31,67 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     '&:last-child td, &:last-child th': {
         border: 0,
     },
 }));
 
-function createData(
-    id,
-    name,
-    course_name,
-    phone_number,
-) {
-    return { id, name, course_name, phone_number };
-}
+const AssignDuty = () => {
+    const [studentId, setStudentId] = useState('');
+    const [place, setPlace] = useState('');
+    const [unmatchedStudents, setUnmatchedStudents] = useState([]);
 
-const rows = [
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', '0786386950'),
+    useEffect(() => {
+        fetchData();
+    }, []);
 
-];
+    const fetchData = async () => {
+        try {
+            // Fetch data from the 'unmatched_students' endpoint
+            const response = await fetch('http://localhost:5000/api/unmatched_students');
+            const data = await response.json();
 
+            // Set the unmatched students data to state
+            setUnmatchedStudents(data);
+        } catch (error) {
+            console.error('Error fetching data:', error.message);
+            alert(`Error fetching data: ${error.message}`);
+        }
+    };
 
-const assignduty = () => {
+    const handleStudentIdChange = (e) => {
+        setStudentId(e.target.value);
+    };
 
-    const [openDetails, setOpenDetails] = React.useState({}); // State to track open details
+    const handlePlaceChange = (e) => {
+        setPlace(e.target.value);
+    };
 
-    const handleOpenDetails = (rowId) => {
-        setOpenDetails({ ...openDetails, [rowId]: !openDetails[rowId] });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('http://localhost:5000/api/add_work', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ StudentID: studentId, Place: place }),
+            });
+
+            if (response.ok) {
+                alert('Work added successfully');
+                setStudentId('');
+                setPlace('');
+                fetchData(); // Refresh data after adding work
+            } else {
+                const errorData = await response.json();
+                console.error('Error adding work:', errorData.message);
+                alert(`Error adding work: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Error adding work:', error.message);
+            alert(`Error adding work: ${error.message}`);
+        }
     };
 
     return (
@@ -94,7 +113,7 @@ const assignduty = () => {
                         <Box
                             component="form"
                             sx={{
-                                marginTop: -1, // Add margin-top: 20px
+                                marginTop: -1,
                                 backgroundColor: 'rgb(188, 187, 187)',
                                 borderRadius: 2,
                                 '& > :not(style)': { m: 1, width: '90%' },
@@ -102,7 +121,13 @@ const assignduty = () => {
                             noValidate
                             autoComplete="off"
                         >
-                            <TextField id="outlined-basic" label="Enter student ID " variant="standard" />
+                            <TextField
+                                id="studentId"
+                                label="Enter student ID"
+                                variant="standard"
+                                value={studentId}
+                                onChange={handleStudentIdChange}
+                            />
                         </Box>
                     </div>
                     <div>
@@ -112,7 +137,7 @@ const assignduty = () => {
                         <Box
                             component="form"
                             sx={{
-                                marginTop: -1, // Add margin-top: 20px
+                                marginTop: -1,
                                 backgroundColor: 'rgb(188, 187, 187)',
                                 borderRadius: 2,
                                 '& > :not(style)': { m: 1, width: '97%' },
@@ -120,14 +145,26 @@ const assignduty = () => {
                             noValidate
                             autoComplete="off"
                         >
-                            <TextField id="outlined-basic" label="What is the place & work?" variant="standard" />
+                            <TextField
+                                id="place"
+                                label="What is the place & work?"
+                                variant="standard"
+                                value={place}
+                                onChange={handlePlaceChange}
+                            />
                         </Box>
                     </div>
                     <div>
                         <div className='asduty-add-save-btn7'>
                             <Stack direction="row" spacing={4}>
-                                <Button variant="contained" endIcon={<SaveIcon />} className='edit-btn-min4' style={{ width: '100%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}>
-                                    save
+                                <Button
+                                    variant="contained"
+                                    endIcon={<SaveIcon />}
+                                    className='edit-btn-min4'
+                                    style={{ width: '100%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
+                                    onClick={handleSubmit}
+                                >
+                                    Save
                                 </Button>
                             </Stack>
                         </div>
@@ -150,12 +187,12 @@ const assignduty = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {rows.map((row) => (
-                                    <StyledTableRow key={row.id}>
-                                        <StyledTableCell align="center">{row.id}</StyledTableCell>
-                                        <StyledTableCell align="center">{row.name}</StyledTableCell>
-                                        <StyledTableCell align="center">{row.course_name}</StyledTableCell>
-                                        <StyledTableCell align="center">{row.phone_number}</StyledTableCell>
+                                {unmatchedStudents.map((student) => (
+                                    <StyledTableRow key={student.studentId}>
+                                        <StyledTableCell align="center">{student.studentId}</StyledTableCell>
+                                        <StyledTableCell align="center">{`${student.firstName} ${student.lastName}`}</StyledTableCell>
+                                        <StyledTableCell align="center">{student.courseName}</StyledTableCell>
+                                        <StyledTableCell align="center">{student.phoneNumber}</StyledTableCell>
                                     </StyledTableRow>
                                 ))}
                             </TableBody>
@@ -167,4 +204,4 @@ const assignduty = () => {
     )
 }
 
-export default assignduty
+export default AssignDuty;
