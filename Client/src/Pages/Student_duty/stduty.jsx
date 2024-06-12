@@ -27,7 +27,7 @@ const stduty = () => {
         <div className='stduty-top-main-rect'>
 
           <div className='stduty-m-rect1'>
-            <h3 className='stduty-tp1'>Recent Monthly Duty</h3>
+            <h3 className='stduty-tp1'>Recent kitchen Duty</h3>
             <div className='stduty-lbl-11'>
               <img src={duty_icon1} className='stduty-lbl-icon1' />
               <div className='stduty-lbl-detail1'>
@@ -59,7 +59,7 @@ const stduty = () => {
             <div className='stduty-lbl-21'>
               <img src={duty_icon3} className='stduty-lbl-icon1' />
               <div className='stduty-lbl-detail1'>
-                <h5>Sharamadana 23/04/2024</h5>
+                <h5>Meditation 23/04/2024</h5>
               </div>
             </div>
             <div className='stduty-lbl-21'>
@@ -74,11 +74,11 @@ const stduty = () => {
 
         <div className='stduty-bottom-main-rect'>
           <div className='stduty-bottom-m-rect1'>
-            <h3 className='stduty-tp1'>Upcoming Events</h3>
+            <h3 className='stduty-tp1'>External Works</h3>
             <div className='stduty-bottom-lbl-11'>
               <img src={duty_icon2} className='stduty-bottom-lbl-icon1' />
               <div className='stduty-lbl-detail1'>
-                <h5>Poya Day In Chaithya At 12.00p.m.</h5>
+                <h5>Sharamadana 23/04/2024 at 14.00 p.m.</h5>
               </div>
               <div className='stduty-accept-btn'>
                 <Button variant="contained" size="small" color="success">
@@ -94,7 +94,7 @@ const stduty = () => {
             <div className='stduty-bottom-lbl-21'>
               <img src={duty_icon3} className='stduty-bottom-lbl-icon1' />
               <div className='stduty-lbl-detail1'>
-                <h5>Sharamadana 23/04/2024</h5>
+                <h5>Sharamadana 23/04/2024 at 14.00 p.m.</h5>
               </div>
               <div className='stduty-accept-btn1'>
                 <Button variant="contained" size="small" color="success">
@@ -102,22 +102,6 @@ const stduty = () => {
                 </Button>
               </div>
               <div className='stduty-reject-btn1' onClick={handleRejectReasonClick}>
-                <Button variant="contained" size="small" color="error">
-                  Reject
-                </Button>
-              </div>
-            </div>
-            <div className='stduty-bottom-lbl-21'>
-              <img src={duty_icon4} className='stduty-bottom-lbl-icon1' />
-              <div className='stduty-lbl-detail1'>
-                <h5>Guest lecture 24/04/2024</h5>
-              </div>
-              <div className='stduty-accept-btn2'>
-                <Button variant="contained" size="small" color="success">
-                  Accept
-                </Button>
-              </div>
-              <div className='stduty-reject-btn2' onClick={handleRejectReasonClick}>
                 <Button variant="contained" size="small" color="error">
                   Reject
                 </Button>

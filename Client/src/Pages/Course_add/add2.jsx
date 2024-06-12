@@ -6,15 +6,20 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
+import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const add2 = () => {
-    const [courseId, setCourseId] = useState('');
-    const [courseName, setCourseName] = useState('');
-    const [moduleCoordinatorName, setModuleCoordinatorName] = useState('');
-    const [coordinatorPhoneNumber, setCoordinatorPhoneNumber] = useState('');
-    const [noOfStudent, setNoOfStudent] = useState('');
-    const [courseDuration, setCourseDuration] = useState('');
-    const [descriptionOfCourse, setDescriptionOfCourse] = useState('');
+    const [values, setValues] = useState({
+        courseId: '',
+        courseName: '',
+        moduleCoordinatorName: '',
+        coordinatorPhoneNumber: '',
+        noOfStudent: '',
+        courseDuration: '',
+        descriptionOfCourse: '',
+    });
 
     const [errors, setErrors] = useState({
         courseId: '',
@@ -23,88 +28,99 @@ const add2 = () => {
         coordinatorPhoneNumber: '',
         noOfStudent: '',
         courseDuration: '',
+        descriptionOfCourse: '',
     });
 
-    const handleCourseIdChange = (e) => {
-        const value = e.target.value.toUpperCase();
-        if (/^[A-Z0-9]*$/.test(value)) {
-            setCourseId(value);
-            setErrors((prev) => ({ ...prev, courseId: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, courseId: 'Only numbers and capital letters without spaces are allowed.' }));
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setValues({ ...values, [name]: value });
+
+        switch (name) {
+            case 'courseId':
+                if (/^[A-Z0-9]*$/.test(value)) {
+                    setErrors({ ...errors, [name]: '' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only numbers and capital letters without spaces are allowed.' });
+                }
+                break;
+            case 'courseName':
+            case 'moduleCoordinatorName':
+                if (/^[A-Za-z\s]*$/.test(value)) {
+                    setErrors({ ...errors, [name]: '' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only letters and spaces are allowed.' });
+                }
+                break;
+            case 'coordinatorPhoneNumber':
+                if (/^\d*$/.test(value) && value.length <= 10) {
+                    setErrors({ ...errors, [name]: value.length === 10 ? '' : 'Must be a 10-digit number.' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only 10-digit numbers are allowed.' });
+                }
+                break;
+            case 'noOfStudent':
+                if (/^\d*$/.test(value)) {
+                    setErrors({ ...errors, [name]: '' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only numbers are allowed.' });
+                }
+                break;
+            case 'courseDuration':
+                if (/^[A-Za-z0-9\s]*$/.test(value)) {
+                    setErrors({ ...errors, [name]: '' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only letters and numbers are allowed.' });
+                }
+                break;
+            case 'descriptionOfCourse':
+                setErrors({ ...errors, [name]: '' });
+                break;
+            default:
+                break;
         }
     };
 
-    const handleCourseNameChange = (e) => {
-        const value = e.target.value;
-        if (/^[A-Za-z\s]*$/.test(value)) {
-            setCourseName(value);
-            setErrors((prev) => ({ ...prev, courseName: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, courseName: 'Only letters and spaces are allowed.' }));
-        }
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        axios.post('http://localhost:3000/contact', values)
+            .then(res => {
+                setSnackbar({
+                    open: true,
+                    message: 'Course added successfully!',
+                    severity: 'success',
+                });
+            })
+            .catch(err => {
+                setSnackbar({
+                    open: true,
+                    message: 'Failed to add course.',
+                    severity: 'error',
+                });
+            });
     };
 
-    const handleModuleCoordinatorNameChange = (e) => {
-        const value = e.target.value;
-        if (/^[A-Za-z\s]*$/.test(value)) {
-            setModuleCoordinatorName(value);
-            setErrors((prev) => ({ ...prev, moduleCoordinatorName: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, moduleCoordinatorName: 'Only letters and spaces are allowed.' }));
-        }
-    };
-
-    const handleCoordinatorPhoneNumberChange = (e) => {
-        const value = e.target.value;
-        if (/^\d*$/.test(value) && value.length <= 10) {
-            setCoordinatorPhoneNumber(value);
-            setErrors((prev) => ({ ...prev, coordinatorPhoneNumber: value.length === 10 ? '' : 'Must be a 10-digit number.' }));
-        } else {
-            setErrors((prev) => ({ ...prev, coordinatorPhoneNumber: 'Only 10-digit numbers are allowed.' }));
-        }
-    };
-
-    const handleNoOfStudentChange = (e) => {
-        const value = e.target.value;
-        if (/^\d*$/.test(value)) {
-            setNoOfStudent(value);
-            setErrors((prev) => ({ ...prev, noOfStudent: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, noOfStudent: 'Only numbers are allowed.' }));
-        }
-    };
-
-    const handleCourseDurationChange = (e) => {
-        const value = e.target.value;
-        if (/^[A-Za-z0-9\s]*$/.test(value)) {
-            setCourseDuration(value);
-            setErrors((prev) => ({ ...prev, courseDuration: '' }));
-        } else {
-            setErrors((prev) => ({ ...prev, courseDuration: 'Only letters and numbers are allowed.' }));
-        }
-    };
-
-    const handleDescriptionChange = (e) => {
-        setDescriptionOfCourse(e.target.value);
-    };
-
-    const handleSubmit = () => {
-        // Add your submit logic here
-        console.log({
-            courseId,
-            courseName,
-            moduleCoordinatorName,
-            coordinatorPhoneNumber,
-            noOfStudent,
-            courseDuration,
-            descriptionOfCourse,
-        });
+    const handleClose = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     return (
         <div>
             <Head />
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+            >
+                <Alert onClose={handleClose} severity={snackbar.severity} sx={{ width: '100%', fontSize: '20px' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
             <div className='big-rect9'>
                 <div>
                     <h2 className='top-head9'>Add Course!</h2>
@@ -119,7 +135,7 @@ const add2 = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, 
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -142,7 +158,7 @@ const add2 = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, 
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -168,7 +184,7 @@ const add2 = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, 
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -191,7 +207,7 @@ const add2 = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, 
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -217,7 +233,7 @@ const add2 = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, 
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },
@@ -240,7 +256,7 @@ const add2 = () => {
                                 <Box
                                     component="form"
                                     sx={{
-                                        marginTop: 7, 
+                                        marginTop: 7,
                                         backgroundColor: 'rgb(188, 187, 187)',
                                         borderRadius: 4,
                                         '& > :not(style)': { m: 1, width: '90%' },

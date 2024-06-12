@@ -190,9 +190,9 @@ const Signup = () => {
                   <div className='fieldsty2'>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                       <FormControl variant="standard" fullWidth error={Boolean(confirmPasswordError)}>
-                        <InputLabel htmlFor="confirm-password"></InputLabel>
+                        <InputLabel htmlFor="confirmPassword"></InputLabel>
                         <Input
-                          id="confirm-password"
+                          id="confirmPassword"
                           type={showPassword ? 'text' : 'password'}
                           value={confirmPassword}
                           onChange={handleConfirmPasswordChange}

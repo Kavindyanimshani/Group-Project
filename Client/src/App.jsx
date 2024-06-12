@@ -32,6 +32,7 @@ import Student_duty from './Pages/Student_duty/stduty';
 import Reject_reason from './Pages/Reject_reason/rejreason';
 import Stdsick_leave from './Pages/Stdsick_leave/stdsicklv';
 import Stdleave_req from './Pages/Stdleave_req/leavereq';
+import Kitchen_duty from './Pages/Kitchen_duty/kitchen_duty';
 
 // Importing Components
 import Homepage_head from './Component/Homepage_head/homepage';
@@ -62,7 +63,8 @@ const App = () => {
         <Route path='/course-list' element={<Course_list />} />
         <Route path='/course-add' element={<Course_add />} />
         <Route path='/course-edit' element={<Course_edit />} />
-        <Route path='/assign-duty' element={<Assign_duty />} />
+        <Route path='/external-work' element={<Assign_duty />} />
+        <Route path='/kitchen-duty' element={<Kitchen_duty />} />
         <Route path='/user-profile' element={<User_profile />} />
         <Route path='/student-profile' element={<Student_profile />} />
         <Route path='/teacher-profile' element={<Teacher_profile />} />
