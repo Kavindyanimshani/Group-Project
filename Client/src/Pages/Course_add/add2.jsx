@@ -6,68 +6,121 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
+import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const Add2 = () => {
-    const [courseId, setCourseId] = useState('');
-    const [courseName, setCourseName] = useState('');
-    const [moduleCoordinatorName, setModuleCoordinatorName] = useState('');
-    const [coordinatorPhoneNumber, setCoordinatorPhoneNumber] = useState('');
-    const [noOfStudent, setNoOfStudent] = useState('');
-    const [courseDuration, setCourseDuration] = useState('');
-    const [descriptionOfCourse, setDescriptionOfCourse] = useState('');
+    const [values, setValues] = useState({
+        courseId: '',
+        courseName: '',
+        moduleCoordinatorName: '',
+        coordinatorPhoneNumber: '',
+        noOfStudent: '',
+        courseDuration: '',
+        descriptionOfCourse: '',
+    });
 
-    const handleCourseIdChange = (e) => setCourseId(e.target.value.toUpperCase());
-    const handleCourseNameChange = (e) => setCourseName(e.target.value);
-    const handleModuleCoordinatorNameChange = (e) => setModuleCoordinatorName(e.target.value);
-    const handleCoordinatorPhoneNumberChange = (e) => setCoordinatorPhoneNumber(e.target.value);
-    const handleNoOfStudentChange = (e) => setNoOfStudent(e.target.value);
-    const handleCourseDurationChange = (e) => setCourseDuration(e.target.value);
-    const handleDescriptionChange = (e) => setDescriptionOfCourse(e.target.value);
+    const [errors, setErrors] = useState({
+        courseId: '',
+        courseName: '',
+        moduleCoordinatorName: '',
+        coordinatorPhoneNumber: '',
+        noOfStudent: '',
+        courseDuration: '',
+        descriptionOfCourse: '',
+    });
 
-    const handleSubmit = async () => {
-        const courseData = {
-            courseId,
-            courseName,
-            moduleCoordinatorName,
-            coordinatorPhoneNumber,
-            noOfStudent,
-            courseDuration,
-            descriptionOfCourse,
-        };
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
 
-        try {
-            const response = await fetch('http://localhost:5000/api/courses', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(courseData),
-            });
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setValues({ ...values, [name]: value });
 
-            const responseData = await response.json();
-            
-            if (response.ok) {
-                console.log('Course added successfully');
-                alert('Course added successfully');
-                // Reset form fields
-                setCourseId('');
-                setCourseName('');
-                setModuleCoordinatorName('');
-                setCoordinatorPhoneNumber('');
-                setNoOfStudent('');
-                setCourseDuration('');
-                setDescriptionOfCourse('');
-            } else {
-                console.error('Error adding course:', responseData.error);
-                alert('Error adding course: ' + responseData.error);
-            }
-        } catch (error) {
-            console.error('Error adding course:', error.message);
-            alert('Error adding course: ' + error.message);
+        switch (name) {
+            case 'courseId':
+                if (/^[A-Z0-9]*$/.test(value)) {
+                    setErrors({ ...errors, [name]: '' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only numbers and capital letters without spaces are allowed.' });
+                }
+                break;
+            case 'courseName':
+            case 'moduleCoordinatorName':
+                if (/^[A-Za-z\s]*$/.test(value)) {
+                    setErrors({ ...errors, [name]: '' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only letters and spaces are allowed.' });
+                }
+                break;
+            case 'coordinatorPhoneNumber':
+                if (/^\d*$/.test(value) && value.length <= 10) {
+                    setErrors({ ...errors, [name]: value.length === 10 ? '' : 'Must be a 10-digit number.' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only 10-digit numbers are allowed.' });
+                }
+                break;
+            case 'noOfStudent':
+                if (/^\d*$/.test(value)) {
+                    setErrors({ ...errors, [name]: '' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only numbers are allowed.' });
+                }
+                break;
+            case 'courseDuration':
+                if (/^[A-Za-z0-9\s]*$/.test(value)) {
+                    setErrors({ ...errors, [name]: '' });
+                } else {
+                    setErrors({ ...errors, [name]: 'Only letters and numbers are allowed.' });
+                }
+                break;
+            case 'descriptionOfCourse':
+                setErrors({ ...errors, [name]: '' });
+                break;
+            default:
+                break;
         }
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        axios.post('http://localhost:3000/contact', values)
+            .then(res => {
+                setSnackbar({
+                    open: true,
+                    message: 'Course added successfully!',
+                    severity: 'success',
+                });
+            })
+            .catch(err => {
+                setSnackbar({
+                    open: true,
+                    message: 'Failed to add course.',
+                    severity: 'error',
+                });
+            });
+    };
+
+    const handleClose = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     return (
         <div>
             <Head />
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+            >
+                <Alert onClose={handleClose} severity={snackbar.severity} sx={{ width: '100%', fontSize: '20px' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
             <div className='big-rect9'>
                 <div>
                     <h2 className='top-head9'>Add Course!</h2>
@@ -81,44 +134,31 @@ const Add2 = () => {
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
+                                    sx={{
+                                        marginTop: 7,
+                                        backgroundColor: 'rgb(188, 187, 187)',
+                                        borderRadius: 4,
+                                        '& > :not(style)': { m: 1, width: '90%' },
+                                    }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="courseId" label="Course ID" variant="standard" value={courseId} onChange={handleCourseIdChange} />
+                                    <TextField id="courseId" label="Course ID" variant="standard" name="courseId" value={values.courseId} onChange={handleChange} />
                                 </Box>
                             </div>
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
+                                    sx={{
+                                        marginTop: 7,
+                                        backgroundColor: 'rgb(188, 187, 187)',
+                                        borderRadius: 4,
+                                        '& > :not(style)': { m: 1, width: '90%' },
+                                    }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="coordinatorPhoneNumber" label="Coordinator Phone Number" variant="standard" value={coordinatorPhoneNumber} onChange={handleCoordinatorPhoneNumberChange} />
-                                </Box>
-                            </div>
-                        </div>
-
-                        <div className='xs-add-sub9'>
-                            <div>
-                                <Box
-                                    component="form"
-                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
-                                    noValidate
-                                    autoComplete="off"
-                                >
-                                    <TextField id="courseName" label="Course Name" variant="standard" value={courseName} onChange={handleCourseNameChange} />
-                                </Box>
-                            </div>
-                            <div>
-                                <Box
-                                    component="form"
-                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
-                                    noValidate
-                                    autoComplete="off"
-                                >
-                                    <TextField id="noOfStudent" label="No Of Student" variant="standard" value={noOfStudent} onChange={handleNoOfStudentChange} />
+                                    <TextField id="coordinatorPhoneNumber" label="Coordinator Phone Number" variant="standard" name="coordinatorPhoneNumber" value={values.coordinatorPhoneNumber} onChange={handleChange} />
                                 </Box>
                             </div>
                         </div>
@@ -127,21 +167,64 @@ const Add2 = () => {
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
+                                    sx={{
+                                        marginTop: 7,
+                                        backgroundColor: 'rgb(188, 187, 187)',
+                                        borderRadius: 4,
+                                        '& > :not(style)': { m: 1, width: '90%' },
+                                    }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="moduleCoordinatorName" label="Module Coordinator Name" variant="standard" value={moduleCoordinatorName} onChange={handleModuleCoordinatorNameChange} />
+                                    <TextField id="courseName" label="Course Name" variant="standard" name="courseName" value={values.courseName} onChange={handleChange} />
                                 </Box>
                             </div>
                             <div>
                                 <Box
                                     component="form"
-                                    sx={{ marginTop: 7, backgroundColor: 'rgb(188, 187, 187)', borderRadius: 4, '& > :not(style)': { m: 1, width: '90%' } }}
+                                    sx={{
+                                        marginTop: 7,
+                                        backgroundColor: 'rgb(188, 187, 187)',
+                                        borderRadius: 4,
+                                        '& > :not(style)': { m: 1, width: '90%' },
+                                    }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="courseDuration" label="Course Duration" variant="standard" value={courseDuration} onChange={handleCourseDurationChange} />
+                                    <TextField id="noOfStudent" label="No Of Student" variant="standard" name="noOfStudent" value={values.noOfStudent} onChange={handleChange} />
+                                </Box>
+                            </div>
+                        </div>
+
+                        <div className='xs-add-sub9'>
+                            <div>
+                                <Box
+                                    component="form"
+                                    sx={{
+                                        marginTop: 7,
+                                        backgroundColor: 'rgb(188, 187, 187)',
+                                        borderRadius: 4,
+                                        '& > :not(style)': { m: 1, width: '90%' },
+                                    }}
+                                    noValidate
+                                    autoComplete="off"
+                                >
+                                    <TextField id="moduleCoordinatorName" label="Module Coordinator Name" variant="standard" name="moduleCoordinatorName" value={values.moduleCoordinatorName} onChange={handleChange} />
+                                </Box>
+                            </div>
+                            <div>
+                                <Box
+                                    component="form"
+                                    sx={{
+                                        marginTop: 7,
+                                        backgroundColor: 'rgb(188, 187, 187)',
+                                        borderRadius: 4,
+                                        '& > :not(style)': { m: 1, width: '90%' },
+                                    }}
+                                    noValidate
+                                    autoComplete="off"
+                                >
+                                    <TextField id="courseDuration" label="Course Duration" variant="standard" name="courseDuration" value={values.courseDuration} onChange={handleChange} />
                                 </Box>
                             </div>
                         </div>
@@ -155,7 +238,7 @@ const Add2 = () => {
                                 noValidate
                                 autoComplete="off"
                             >
-                                <TextField id="descriptionOfCourse" label="Description Of Course" variant="standard" value={descriptionOfCourse} onChange={handleDescriptionChange} />
+                                <TextField id="descriptionOfCourse" label="Description Of Course" variant="standard" name="descriptionOfCourse" value={values.descriptionOfCourse} onChange={handleChange} />
                             </Box>
                         </div>
                     </div>

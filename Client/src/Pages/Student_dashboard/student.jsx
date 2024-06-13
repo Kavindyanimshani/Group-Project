@@ -88,7 +88,7 @@ const student = () => {
                         <div className='lbl-21'>
                             <img src={Image6} className='lbl-icon1' />
                             <div className='lbl-detail1'>
-                                <h5>Sharamadana 23/04/2024</h5>
+                                <h5>Meditation 23/04/2024</h5>
                             </div>
                         </div>
                         <div className='lbl-21'>
@@ -104,7 +104,7 @@ const student = () => {
                 <div className='m-main-rect1'>
 
                     <div className='m-rect1'>
-                        <h3 className='tp1'>Recent Monthly Duty</h3>
+                        <h3 className='tp1'>Recent Kitchen Duty</h3>
                         <div className='lbl-11'>
                             <img src={Image8} className='lbl-icon1' />
                             <div className='lbl-detail1'>

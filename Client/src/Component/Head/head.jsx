@@ -57,7 +57,11 @@ const Head = () => {
     }
 
     const handleAssignDutyClick = () => {
-        navigate('/assign-duty');
+        navigate('/external-work');
+    }
+
+    const handleKitchenDutyClick = () => {
+        navigate('/kitchen-duty');
     }
 
     const handleSickLeaveClick = () => {
@@ -150,10 +154,14 @@ const Head = () => {
                     </div>
                 </div>
 
-                <div className="dropdown" onClick={handleAssignDutyClick}>
+                <div className="dropdown">
                     <button className="topic-btn">
                         Assing Duty
                     </button>
+                    <div className="dropdown-content">
+                        <div onClick={handleAssignDutyClick}><a href="#">External Work</a></div>
+                        <div onClick={handleKitchenDutyClick}><a href="#">Kitchen Duty</a></div>
+                    </div>
                 </div>
 
                 <div className="dropdown" onClick={handleSickLeaveClick}>

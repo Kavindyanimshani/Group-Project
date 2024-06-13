@@ -163,6 +163,8 @@ const Signin = () => {
               <a href='/signup' className='signup-link-txt'>Sign Up</a>
             </div>
             <div>
+              <button type="submit" className='signin-main-btn'><a href='/student-panel' className='signin-main-btn-clr'>Sign In</a></button>
+
               <button type="submit" className='signin-main-btn'>Sign In</button>
             </div>
           </form>
