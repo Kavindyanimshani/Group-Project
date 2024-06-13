@@ -1,4 +1,3 @@
-// List2.jsx
 import React, { useState, useEffect } from 'react';
 import './list2.css';
 import Head from '../../Component/Head/head';
@@ -79,7 +78,7 @@ const List2 = () => {
                                 {courses.map((course) => (
                                     <React.Fragment key={course.LecturerID}>
                                         <StyledTableRow>
-                                            <StyledTableCell align="center">{course.LecturerID }</StyledTableCell>
+                                            <StyledTableCell align="center">{course.LecturerID}</StyledTableCell>
                                             <StyledTableCell align="center">{course.Module}</StyledTableCell>
                                             <StyledTableCell align="center">{course.LecturerName}</StyledTableCell>
                                             <StyledTableCell align="center">
@@ -97,7 +96,7 @@ const List2 = () => {
                                         {openDetails[course.LecturerID] && (
                                             <TableRow>
                                                 <StyledTableCell colSpan={5}>
-                                                    <p>{course.OtherInfo }</p>
+                                                    <p>{course.OtherInfo}</p>
                                                 </StyledTableCell>
                                             </TableRow>
                                         )}

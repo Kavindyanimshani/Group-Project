@@ -1,16 +1,29 @@
-// course_add.js
-
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const db = require('./db'); // Ensure this path is correct for your db module
 
-router.post('/courses', (req, res) => { // Change the route path to '/'
+// Endpoint to add a new course
+router.post('/courses', (req, res) => {
     const {
-        courseId, courseName, moduleCoordinatorName, coordinatorPhoneNumber, noOfStudent, courseDuration, descriptionOfCourse
+        courseId,
+        courseName,
+        moduleCoordinatorName,
+        coordinatorPhoneNumber,
+        noOfStudent,
+        courseDuration,
+        descriptionOfCourse
     } = req.body;
 
     const sql = "INSERT INTO course (CourseID, CourseName, CourseCoordinator, PhoneNumber, NoOfStudents, CourseDuration, DescriptionOfCourse) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    const values = [ courseId,  courseName,  moduleCoordinatorName,  coordinatorPhoneNumber, noOfStudent, courseDuration, descriptionOfCourse ];
+    const values = [
+        courseId,
+        courseName,
+        moduleCoordinatorName,
+        coordinatorPhoneNumber,
+        noOfStudent,
+        courseDuration,
+        descriptionOfCourse
+    ];
 
     db.query(sql, values, (err, result) => {
         if (err) {

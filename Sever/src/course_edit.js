@@ -1,7 +1,6 @@
-// course_edit.js
 const express = require('express');
 const router = express.Router();
-const db = require('./db'); // assuming you have a db.js file for database connection
+const db = require('./db'); // Ensure you have a db.js file for database connection
 
 // Update course information
 router.put('/courses/:courseId', (req, res) => {

@@ -12,9 +12,10 @@ const teacherListRouter = require('./teacher_list');
 const courseListRouter = require('./course_list');
 const stUpdateRouter = require('./st_update');
 const teacherEditRouter = require('./teacher_edit');
-const courseEditRouter = require('./course_edit');
+const courseEditRouter = require('./course_edit'); // Import course_edit route
+const courseAddRouter = require('./course_add'); // Import course_add route
 const addWorkRouter = require('./add_work');
-const adminRouter = require('./admin'); // Import the admin route
+const adminRouter = require('./admin');
 
 app.use(cors());
 app.use(express.json());
@@ -29,9 +30,10 @@ app.use('/api', teacherListRouter);
 app.use('/api', courseListRouter);
 app.use('/api', stUpdateRouter);
 app.use('/api', teacherEditRouter);
-app.use('/api', courseEditRouter);
+app.use('/api', courseEditRouter); // Use course_edit route
+app.use('/api', courseAddRouter); // Use course_add route
 app.use('/api', addWorkRouter);
-app.use('/api', adminRouter); // Use the admin route
+app.use('/api/admin', adminRouter);
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');

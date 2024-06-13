@@ -1,5 +1,3 @@
-// add2.jsx
-
 import React, { useState } from 'react';
 import './add2.css';
 import Head from '../../Component/Head/head';
@@ -18,7 +16,6 @@ const Add2 = () => {
     const [courseDuration, setCourseDuration] = useState('');
     const [descriptionOfCourse, setDescriptionOfCourse] = useState('');
 
-    
     const handleCourseIdChange = (e) => setCourseId(e.target.value.toUpperCase());
     const handleCourseNameChange = (e) => setCourseName(e.target.value);
     const handleModuleCoordinatorNameChange = (e) => setModuleCoordinatorName(e.target.value);
@@ -44,14 +41,27 @@ const Add2 = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(courseData),
             });
+
+            const responseData = await response.json();
+            
             if (response.ok) {
                 console.log('Course added successfully');
+                alert('Course added successfully');
+                // Reset form fields
+                setCourseId('');
+                setCourseName('');
+                setModuleCoordinatorName('');
+                setCoordinatorPhoneNumber('');
+                setNoOfStudent('');
+                setCourseDuration('');
+                setDescriptionOfCourse('');
             } else {
-                const errorData = await response.json();
-                console.error('Error adding course:', errorData.error);
+                console.error('Error adding course:', responseData.error);
+                alert('Error adding course: ' + responseData.error);
             }
         } catch (error) {
             console.error('Error adding course:', error.message);
+            alert('Error adding course: ' + error.message);
         }
     };
 

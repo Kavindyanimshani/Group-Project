@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './edit2.css';
-import axios from 'axios'; // Import axios library
+import axios from 'axios';
 import Head from '../../Component/Head/head';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 
-const edit2 = () => {
+const Edit2 = () => {
     const [courseId, setCourseId] = useState('');
     const [courseName, setCourseName] = useState('');
     const [moduleCoordinatorName, setModuleCoordinatorName] = useState('');
@@ -92,7 +92,7 @@ const edit2 = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.put(`/api/courses/${courseId}`, {
+            const response = await axios.put(`http://localhost:5000/api/courses/${courseId}`, {
                 courseName,
                 moduleCoordinatorName,
                 coordinatorPhoneNumber,
@@ -120,6 +120,7 @@ const edit2 = () => {
             }
         }
     };
+
     return (
         <div>
             <Head />
@@ -321,4 +322,4 @@ const edit2 = () => {
     );
 };
 
-export default edit2;
+export default Edit2;

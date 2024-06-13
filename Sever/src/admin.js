@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('./db'); // Ensure this path is correct for your db module
 
 // Endpoint to get stats for admin dashboard
-router.get('/admin/stats', (req, res) => {
+router.get('/stats', (req, res) => {
     let studentCount, teacherCount, courseCount;
 
     // Query to get the count of students
@@ -42,7 +42,7 @@ router.get('/admin/stats', (req, res) => {
 });
 
 // Endpoint to get all student data
-router.get('/admin/students', (req, res) => {
+router.get('/students', (req, res) => {
     db.query('SELECT * FROM students', (err, results) => {
         if (err) {
             console.error('Error fetching student data:', err.message);

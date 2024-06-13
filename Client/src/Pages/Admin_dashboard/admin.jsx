@@ -35,7 +35,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     '&:last-child td, &:last-child th': {
         border: 0,
     },
@@ -53,7 +52,7 @@ const Admin = () => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log('Fetched stats:', data); // Log fetched data
+                console.log('Fetched stats:', data);
                 setStats(data);
             } catch (error) {
                 console.error('Error fetching stats:', error.message);
@@ -67,7 +66,7 @@ const Admin = () => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log('Fetched students:', data); // Log fetched data
+                console.log('Fetched students:', data);
                 setStudents(data);
             } catch (error) {
                 console.error('Error fetching students:', error.message);
