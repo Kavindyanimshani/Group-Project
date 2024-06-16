@@ -159,13 +159,11 @@ const Signin = () => {
               <h6 className='forgot-psw-topic-in'>Forget Password?</h6>
             </div>
             <div className='already-reg-rect-in'>
-              <h6 className='already-reg-topic-in'>Don't have an account?</h6>
+              <h6 className='already-reg-topic-in'>Dont have an account?</h6>
               <a href='/signup' className='signup-link-txt'>Sign Up</a>
             </div>
             <div>
-              <button type="submit" className='signin-main-btn'><a href='/student-panel' className='signin-main-btn-clr'>Sign In</a></button>
-
-              <button type="submit" className='signin-main-btn'>Sign In</button>
+             <button type="submit" className='signin-main-btn'>Sign In</button>
             </div>
           </form>
         </div>

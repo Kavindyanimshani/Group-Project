@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import './leavereq.css';
 import Head from '../../Component/Head/head';
 import { styled, alpha } from '@mui/material/styles';
@@ -27,48 +27,49 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     '&:last-child td, &:last-child th': {
         border: 0,
     },
 }));
 
-function createData(
-    id,
-    name,
-    course_name,
-    informations,
-    phone_number,
-) {
-    return { id, name, course_name, informations, phone_number };
-}
+const LeaveReq = () => {
+    const [rows, setRows] = useState([]);
+    const [openDetails, setOpenDetails] = useState({});
 
-const rows = [
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
-    createData(220100009, 'M.A.Heshan Rashmika', 'IT Diploma', 'Some detail about student', '0786386950'),
+    useEffect(() => {
+        fetchLeaveRequests();
+    }, []);
 
-];
-
-const leavereq = () => {
-
-
-    const [openDetails, setOpenDetails] = React.useState({}); // State to track open details
+    const fetchLeaveRequests = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/leavereq');
+            const data = await response.json();
+            setRows(data);
+        } catch (error) {
+            console.error('Error fetching leave request data:', error);
+        }
+    };
 
     const handleOpenDetails = (rowId) => {
         setOpenDetails({ ...openDetails, [rowId]: !openDetails[rowId] });
+    };
+
+    const handleReject = async (studentID) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/leavereq/${studentID}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                console.log('Leave request deleted successfully.');
+                // Update frontend state to remove the deleted row
+                setRows(rows.filter(row => row.StudentID !== studentID));
+            } else {
+                console.error('Failed to delete leave request.');
+            }
+        } catch (error) {
+            console.error('Error deleting leave request:', error);
+        }
     };
 
     return (
@@ -98,36 +99,42 @@ const leavereq = () => {
                                     </TableHead>
                                     <TableBody>
                                         {rows.map((row) => (
-                                            <React.Fragment key={row.id}>
+                                            <React.Fragment key={row.StudentID}>
                                                 <StyledTableRow>
-                                                    <StyledTableCell align="center">{row.id}</StyledTableCell>
-                                                    <StyledTableCell align="center">{row.name}</StyledTableCell>
-                                                    <StyledTableCell align="center">{row.course_name}</StyledTableCell>
+                                                    <StyledTableCell align="center">{row.StudentID}</StyledTableCell>
+                                                    <StyledTableCell align="center">{row.StudentName}</StyledTableCell>
+                                                    <StyledTableCell align="center">{row.CourseName}</StyledTableCell>
                                                     <StyledTableCell align="center">
                                                         <Button
                                                             variant="contained"
                                                             size="small"
                                                             sx={{ backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
-                                                            onClick={() => handleOpenDetails(row.id)}
+                                                            onClick={() => handleOpenDetails(row.StudentID)}
                                                         >
-                                                            {openDetails[row.id] ? 'Hide Details' : 'View'}
+                                                            {openDetails[row.StudentID] ? 'Hide Details' : 'View'}
                                                         </Button>
                                                     </StyledTableCell>
-                                                    <StyledTableCell align="center">{row.phone_number}</StyledTableCell>
+                                                    <StyledTableCell align="center">{row.HeadOfDepartment}</StyledTableCell>
                                                     <StyledTableCell align="center">
-                                                        <Button variant="contained" size="small" sx={{ mr: 1, backgroundColor: 'rgb(0, 230, 58)', color: 'white',':hover': { backgroundColor: 'rgb(0, 130, 33)' } }}>
+                                                        <Button variant="contained" size="small" sx={{ mr: 1, backgroundColor: 'rgb(0, 230, 58)', color: 'white', ':hover': { backgroundColor: 'rgb(0, 130, 33)' } }}>
                                                             Accept
                                                         </Button>
-                                                        <Button variant="contained" size="small" color="error" sx={{ ':hover': { backgroundColor: 'darkred' } }}>
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            color="error"
+                                                            sx={{ ':hover': { backgroundColor: 'darkred' } }}
+                                                            onClick={() => handleReject(row.StudentID)}
+                                                        >
                                                             Reject
                                                         </Button>
                                                     </StyledTableCell>
                                                 </StyledTableRow>
-                                                {openDetails[row.id] && (
+                                                {openDetails[row.StudentID] && (
                                                     <TableRow>
-                                                        <StyledTableCell colSpan={5}>
-                                                            {/* Display detailed information from the row.detail property */}
-                                                            <p>{row.informations}</p>
+                                                        <StyledTableCell colSpan={6}>
+                                                            <p>{row.ReasonForLeave}</p>
+                                                            <p>{row.LeaveDuration}</p>
                                                         </StyledTableCell>
                                                     </TableRow>
                                                 )}
@@ -141,7 +148,7 @@ const leavereq = () => {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default leavereq
+export default LeaveReq;

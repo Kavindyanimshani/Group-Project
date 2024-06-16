@@ -1,13 +1,51 @@
-import React from 'react'
-import './leavereq.css'
-import Student_head from '../../Component/Student_head/sthead'
+import React, { useState } from 'react';
+import './leavereq.css';
+import Student_head from '../../Component/Student_head/sthead';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/send';
 
-const leavereq = () => {
+const LeaveReq = () => {
+    const [formValues, setFormValues] = useState({
+        studentID: '',
+        StudentName: '',
+        CourseName: '',
+        HeadOfDepartment: '',
+        LeaveDuration: '',
+        ReasonForLeave: '',
+    });
+
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setFormValues({ ...formValues, [id]: value });
+    };
+
+    const handleSubmit = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/leavereq', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formValues),
+            });
+
+            const result = await response.json(); // Parse the JSON response
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to save the leave request data.');
+            }
+
+            console.log('Leave request data saved successfully:', result);
+            alert(result.message);
+        } catch (error) {
+            console.error('Error:', error);
+            alert(`Error: ${error.message}`);
+        }
+    };
+
     return (
         <div>
             <Student_head />
@@ -26,13 +64,13 @@ const leavereq = () => {
                                     component="form"
                                     sx={{
                                         '& > :not(style)': { m: 1, width: '30ch', borderRadius: 20 },
-                                        display: 'flex', // Added for icon positioning
+                                        display: 'flex', 
                                         alignItems: 'end',
                                     }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="standard-basic" label="Your student ID" variant="filled" sx={{ flexGrow: 1, mr: 1 }} />
+                                    <TextField id="studentID" label="Your student ID" variant="filled" value={formValues.studentID} onChange={handleInputChange} />
 
                                 </Box>
                             </div>
@@ -46,13 +84,13 @@ const leavereq = () => {
                                     component="form"
                                     sx={{
                                         '& > :not(style)': { m: 1, width: '30ch', borderRadius: 20 },
-                                        display: 'flex', // Added for icon positioning
+                                        display: 'flex', 
                                         alignItems: 'end',
                                     }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="standard-basic" label="Your Name" variant="filled" sx={{ flexGrow: 1, mr: 1 }} />
+                                    <TextField id="StudentName" label="Your Name" variant="filled" value={formValues.StudentName} onChange={handleInputChange} />
 
                                 </Box>
                             </div>
@@ -66,13 +104,13 @@ const leavereq = () => {
                                     component="form"
                                     sx={{
                                         '& > :not(style)': { m: 1, width: '30ch', borderRadius: 20 },
-                                        display: 'flex', // Added for icon positioning
+                                        display: 'flex', 
                                         alignItems: 'end',
                                     }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="standard-basic" label="Your course name" variant="filled" sx={{ flexGrow: 1, mr: 1 }} />
+                                    <TextField id="CourseName" label="Your course name" variant="filled" value={formValues.CourseName} onChange={handleInputChange} />
 
                                 </Box>
                             </div>
@@ -88,13 +126,13 @@ const leavereq = () => {
                                     component="form"
                                     sx={{
                                         '& > :not(style)': { m: 1, width: '30ch', borderRadius: 20 },
-                                        display: 'flex', // Added for icon positioning
+                                        display: 'flex', 
                                         alignItems: 'end',
                                     }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="standard-basic" label="Your department head name" variant="filled" sx={{ flexGrow: 1, mr: 1 }} />
+                                    <TextField id="HeadOfDepartment" label="Your department head name" variant="filled" value={formValues.HeadOfDepartment} onChange={handleInputChange} />
 
                                 </Box>
                             </div>
@@ -108,13 +146,13 @@ const leavereq = () => {
                                     component="form"
                                     sx={{
                                         '& > :not(style)': { m: 1, width: '30ch', borderRadius: 20 },
-                                        display: 'flex', // Added for icon positioning
+                                        display: 'flex', 
                                         alignItems: 'end',
                                     }}
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <TextField id="standard-basic" label="Leave duration" variant="filled" sx={{ flexGrow: 1, mr: 1 }} />
+                                    <TextField id="LeaveDuration" label="Leave duration" variant="filled" value={formValues.LeaveDuration} onChange={handleInputChange} />
 
                                 </Box>
                             </div>
@@ -129,20 +167,20 @@ const leavereq = () => {
                                 component="form"
                                 sx={{
                                     '& > :not(style)': { m: 1, width: '116.5ch', borderRadius: 20 },
-                                    display: 'flex', // Added for icon positioning
+                                    display: 'flex', 
                                     alignItems: 'end',
                                 }}
                                 noValidate
                                 autoComplete="off"
                             >
-                                <TextField id="standard-basic" label="Reason for leave request" variant="filled" sx={{ flexGrow: 1, mr: 1 }} />
+                                <TextField id="ReasonForLeave" label="Reason for leave request" variant="filled" value={formValues.ReasonForLeave} onChange={handleInputChange} />
 
                             </Box>
                         </div>
                     </div>
                     <div className='leavereq-send-btn'>
                         <Stack direction="row" spacing={4}>
-                            <Button variant="contained" endIcon={<SaveIcon />} className='edit-btn-min' style={{ width: '70%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}>
+                            <Button variant="contained" endIcon={<SaveIcon />} className='edit-btn-min' style={{ width: '70%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }} onClick={handleSubmit}>
                                 Send
                             </Button>
                         </Stack>
@@ -150,7 +188,7 @@ const leavereq = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default leavereq
+export default LeaveReq;
