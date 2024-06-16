@@ -1,9 +1,16 @@
 const express = require('express');
-const router = express.Router();
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const db = require('./db'); // Ensure this path is correct for your db module
 
+const app = express();
+
+// Use the cors middleware
+app.use(cors());
+app.use(bodyParser.json()); // for parsing application/json
+
 // Endpoint to add a new course
-router.post('/courses', (req, res) => {
+app.post('/api/courses', (req, res) => {
     const {
         courseId,
         courseName,
@@ -35,4 +42,9 @@ router.post('/courses', (req, res) => {
     });
 });
 
-module.exports = router;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+module.exports = app;

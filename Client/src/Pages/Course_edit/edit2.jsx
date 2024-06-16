@@ -16,7 +16,6 @@ const Edit2 = () => {
     const [noOfStudent, setNoOfStudent] = useState('');
     const [courseDuration, setCourseDuration] = useState('');
     const [descriptionOfCourse, setDescriptionOfCourse] = useState('');
-
     const [errors, setErrors] = useState({
         courseId: '',
         courseName: '',
@@ -100,7 +99,7 @@ const Edit2 = () => {
                 courseDuration,
                 descriptionOfCourse,
             });
-
+    
             if (response.status === 200) {
                 // Clear form fields after successful update
                 setCourseId('');
@@ -120,6 +119,7 @@ const Edit2 = () => {
             }
         }
     };
+    
 
     return (
         <div>
