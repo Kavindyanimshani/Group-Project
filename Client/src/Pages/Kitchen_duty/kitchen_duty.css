@@ -9,14 +9,13 @@
 .kitchen_duty-top-head3 {
     font-family: 'Franklin Gothic Medium';
     font-size: larger;
-
 }
 
 .kitchen_duty-rect3 {
     display: flex;
     flex-direction: column;
     width: 95%;
-    height: 85vh;
+    height: auto;  /* Adjusted to auto to fit content */
     border-radius: 25px;
     margin: auto;
     margin-top: 20px;
@@ -33,24 +32,68 @@
 
 .xs-kitchen_duty-rect3 {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;  /* Changed to column to stack form fields and table */
     width: 100%;
     min-height: 50vh;
     margin-top: 8%;
 }
-.xs-kitchen_duty-sub3{
+.xs-kitchen_duty-sub3 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.form-group {
     display: flex;
     flex-direction: column;
-    width: 25%;
-    height: 60vh;
-    border-radius: 25px;
-    margin-left: 10%;
-    margin-top: -10%;
+    width: 48%;
+    margin: 1%;
 }
-.xs-xs-kitchen_duty-sub3{
-    margin-top: -15%;
-}
-.kitchen_duty-save-btn{
+.kitchen_duty-save-btn {
     margin-top: 5%;
     margin-left: 73%;
+}
+
+.table-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.table {
+    min-width: 650px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table thead {
+    background-color: #f1f1f1;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.table th {
+    font-family: 'Franklin Gothic Medium';
+    font-size: larger;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.delete-button {
+    color: #fff;
+    background-color: #f44336;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
 }

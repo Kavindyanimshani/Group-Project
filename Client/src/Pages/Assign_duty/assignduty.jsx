@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
+import EditIcon from '@mui/icons-material/Edit';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -40,18 +41,19 @@ const AssignDuty = () => {
     const [studentId, setStudentId] = useState('');
     const [place, setPlace] = useState('');
     const [unmatchedStudents, setUnmatchedStudents] = useState([]);
+    const [assignedWork, setAssignedWork] = useState([]);
+    const [editMode, setEditMode] = useState(false);
+    const [editId, setEditId] = useState(null);
 
     useEffect(() => {
         fetchData();
+        fetchAssignedWork();
     }, []);
 
     const fetchData = async () => {
         try {
-            // Fetch data from the 'unmatched_students' endpoint
             const response = await fetch('http://localhost:5000/api/unmatched_students');
             const data = await response.json();
-
-            // Set the unmatched students data to state
             setUnmatchedStudents(data);
         } catch (error) {
             console.error('Error fetching data:', error.message);
@@ -59,19 +61,44 @@ const AssignDuty = () => {
         }
     };
 
+    const fetchAssignedWork = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/assigned_work');
+            const data = await response.json();
+            setAssignedWork(data);
+        } catch (error) {
+            console.error('Error fetching data:', error.message);
+            alert(`Error fetching data: ${error.message}`);
+        }
+    };
+
     const handleStudentIdChange = (e) => {
-        setStudentId(e.target.value);
+        const value = e.target.value;
+        if (/^\d*$/.test(value) && value.length <= 10) {
+            setStudentId(value);
+        }
     };
 
     const handlePlaceChange = (e) => {
-        setPlace(e.target.value);
+        const value = e.target.value;
+        if (/^[A-Za-z\s]*$/.test(value)) {
+            setPlace(value);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+      
+        if (!place) {
+            alert('Place cannot be empty and must contain only letters.');
+            return;
+        }
+
         try {
-            const response = await fetch('http://localhost:5000/api/add_work', {
-                method: 'POST',
+            const url = editMode ? `http://localhost:5000/api/update_work/${editId}` : 'http://localhost:5000/api/add_work';
+            const method = editMode ? 'PUT' : 'POST';
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -79,19 +106,29 @@ const AssignDuty = () => {
             });
 
             if (response.ok) {
-                alert('Work added successfully');
+                alert(`Work ${editMode ? 'updated' : 'added'} successfully`);
                 setStudentId('');
                 setPlace('');
-                fetchData(); // Refresh data after adding work
+                fetchData();
+                fetchAssignedWork();
+                setEditMode(false);
+                setEditId(null);
             } else {
                 const errorData = await response.json();
-                console.error('Error adding work:', errorData.message);
-                alert(`Error adding work: ${errorData.message}`);
+                console.error(`Error ${editMode ? 'updating' : 'adding'} work:`, errorData.message);
+                alert(`Error ${editMode ? 'updating' : 'adding'} work: ${errorData.message}`);
             }
         } catch (error) {
-            console.error('Error adding work:', error.message);
-            alert(`Error adding work: ${error.message}`);
+            console.error(`Error ${editMode ? 'updating' : 'adding'} work:`, error.message);
+            alert(`Error ${editMode ? 'updating' : 'adding'} work: ${error.message}`);
         }
+    };
+
+    const handleEdit = (work) => {
+        setStudentId(work.StudentID);
+        setPlace(work.Place);
+        setEditMode(true);
+        setEditId(work.id);
     };
 
     return (
@@ -104,7 +141,7 @@ const AssignDuty = () => {
 
                 <div className='asduty-xs-add-sub7'>
                     <div>
-                        <h2 className='asduty-top-head8'>Add work</h2>
+                        <h2 className='asduty-top-head8'>{editMode ? 'Edit Work' : 'Add Work'}</h2>
                     </div>
                     <div>
                         <h2 className='available-std-txt-topic'>Student ID </h2>
@@ -164,7 +201,7 @@ const AssignDuty = () => {
                                     style={{ width: '100%', backgroundColor: 'rgb(0, 0, 79)', color: 'white' }}
                                     onClick={handleSubmit}
                                 >
-                                    Save
+                                    {editMode ? 'Update' : 'Save'}
                                 </Button>
                             </Stack>
                         </div>
@@ -193,6 +230,45 @@ const AssignDuty = () => {
                                         <StyledTableCell align="center">{`${student.firstName} ${student.lastName}`}</StyledTableCell>
                                         <StyledTableCell align="center">{student.courseName}</StyledTableCell>
                                         <StyledTableCell align="center">{student.phoneNumber}</StyledTableCell>
+                                    </StyledTableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </div>
+
+                <div>
+                    <h2 className='available-std'>Assigned Work</h2>
+                </div>
+
+                <div className='asduty-std-table-rect'>
+                    <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+                        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                            <TableHead>
+                                <TableRow>
+                                    <StyledTableCell align="center">ID</StyledTableCell>
+                                    <StyledTableCell align="center">Student ID</StyledTableCell>
+                                    <StyledTableCell align="center">Place</StyledTableCell>
+                                    <StyledTableCell align="center">Name</StyledTableCell>
+                                    <StyledTableCell align="center">Actions</StyledTableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {assignedWork.map((work) => (
+                                    <StyledTableRow key={work.id}>
+                                        <StyledTableCell align="center">{work.id}</StyledTableCell>
+                                        <StyledTableCell align="center">{work.StudentID}</StyledTableCell>
+                                        <StyledTableCell align="center">{work.Place}</StyledTableCell>
+                                        <StyledTableCell align="center">{`${work.firstName} ${work.lastName}`}</StyledTableCell>
+                                        <StyledTableCell align="center">
+                                            <Button
+                                                variant="contained"
+                                                endIcon={<EditIcon />}
+                                                onClick={() => handleEdit(work)}
+                                            >
+                                                Edit
+                                            </Button>
+                                        </StyledTableCell>
                                     </StyledTableRow>
                                 ))}
                             </TableBody>

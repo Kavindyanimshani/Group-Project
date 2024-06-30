@@ -1,59 +1,67 @@
 // kitchen_duty.js
+
 const express = require('express');
 const router = express.Router();
-const db = require('./db'); // Adjust the path to your db configuration
+const db = require('./db'); // Adjust the path as necessary
 
-// Endpoint to save the kitchen duty data
-router.post('/', (req, res) => {
-    const { 
-        firstStudentName, 
-        secondStudentName, 
-        thirdStudentName, 
-        fourthStudentName, 
-        fiveStudentName, 
-        firstStudentID, 
-        secondStudentID, 
-        thirdStudentID, 
-        fourthStudentID, 
-        fivethStudentID 
-    } = req.body;
+// Route to fetch all kitchen duty data
+router.get('/', (req, res) => {
+    const query = 'SELECT * FROM kitchen_duty';
 
-    console.log('Received data:', req.body); // Log received data
-
-    // Clear the existing data
-    const clearTableQuery = 'TRUNCATE TABLE kitchen_duty';
-
-    db.query(clearTableQuery, (err) => {
+    db.query(query, (err, results) => {
         if (err) {
-            console.error('Error clearing the kitchen duty table:', err); // Log error details
-            return res.status(500).send('Failed to clear the kitchen duty table.');
+            console.error('Error fetching kitchen duty data:', err);
+            return res.status(500).json({ error: 'Database fetch failed' });
         }
 
-        // Insert new data
-        const insertQuery = `INSERT INTO kitchen_duty 
-        (firstStudentName, secondStudentName, thirdStudentName, fourthStudentName, fiveStudentName, firstStudentID, secondStudentID, thirdStudentID, fourthStudentID, fivethStudentID) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        res.json(results);
+    });
+});
 
-        db.query(insertQuery, [
-            firstStudentName, 
-            secondStudentName, 
-            thirdStudentName, 
-            fourthStudentName, 
-            fiveStudentName, 
-            firstStudentID, 
-            secondStudentID, 
-            thirdStudentID, 
-            fourthStudentID, 
-            fivethStudentID
-        ], (err, result) => {
-            if (err) {
-                console.error('Error inserting data into kitchen duty table:', err); // Log error details
-                return res.status(500).send('Failed to save the kitchen duty data.');
-            }
+// Route to add new kitchen duty data
+router.post('/', (req, res) => {
+    const {
+        firstStudentName, secondStudentName, thirdStudentName,
+        fourthStudentName, fiveStudentName,
+        firstStudentID, secondStudentID, thirdStudentID,
+        fourthStudentID, fivethStudentID
+    } = req.body;
 
-            console.log('Kitchen duty data saved successfully:', result); // Log success
-            res.status(200).send('Kitchen duty data saved successfully.');
-        });
+    const query = `
+        INSERT INTO kitchen_duty 
+        (firstStudentName, secondStudentName, thirdStudentName, fourthStudentName, fiveStudentName,
+        firstStudentID, secondStudentID, thirdStudentID, fourthStudentID, fivethStudentID)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(query, [
+        firstStudentName, secondStudentName, thirdStudentName,
+        fourthStudentName, fiveStudentName,
+        firstStudentID, secondStudentID, thirdStudentID,
+        fourthStudentID, fivethStudentID
+    ], (err, results) => {
+        if (err) {
+            console.error('Error inserting kitchen duty:', err);
+            return res.status(500).json({ error: 'Database insertion failed' });
+        }
+
+        res.status(201).json({ message: 'Kitchen duty data saved successfully', results });
+    });
+});
+
+// Route to delete a specific kitchen duty data entry
+router.delete('/:id', (req, res) => {
+    const { id } = req.params;
+
+    const query = 'DELETE FROM kitchen_duty WHERE id = ?';
+
+    db.query(query, [id], (err, results) => {
+        if (err) {
+            console.error('Error deleting kitchen duty data:', err);
+            return res.status(500).json({ error: 'Database deletion failed' });
+        }
+
+        res.status(200).json({ message: 'Kitchen duty data deleted successfully' });
     });
 });
 
